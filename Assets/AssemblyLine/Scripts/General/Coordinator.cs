@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using AL.Audio;
 
 namespace AL
 {
@@ -11,6 +12,7 @@ namespace AL
 
         [Header("Scripts")]
         public AppTheme appTheme;
+        public AudioManager audioManager;
 
         private void Awake()
         {

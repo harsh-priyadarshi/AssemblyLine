@@ -2,48 +2,40 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR;
-using UnityEngine.UI;
 
 
 namespace AL
 {
     public class VRSetup : MonoBehaviour
     {
-        public Toggle platformToggle;
-        public GameObject DesktopCam;
-        public GameObject OculusCam;
         public List<GameObject> DesktopGO;
         public List<GameObject> OculusGO;
-        public Toggle collabToggle;
         public GameObject headsetInstructionPanel;
+        
 
-        public GameObject meetingPanel;
+        //private void  Start()
+        //{
+        //    SetDesktopMode();
+        //}
 
-        private void  Start()
+        private void OnEnable()
         {
-            SetDesktopMode();
+            OVRManager.HMDMounted += HeadsetInstructionPanelOff;
+            OVRManager.HMDUnmounted += HeadsetInstructionPanelOn;
         }
 
-        //private void OnEnable()
-        //{
-        //    OVRManager.HMDMounted += HeadsetInstructionPanelOff;
-        //    OVRManager.HMDUnmounted += HeadsetInstructionPanelOn;
-        //}
+        private void OnDisable()
+        {
+            OVRManager.HMDMounted -= HeadsetInstructionPanelOn;
+            OVRManager.HMDUnmounted -= HeadsetInstructionPanelOff;
+        }
 
-        //private void OnDisable()
-        //{
-        //    OVRManager.HMDMounted -= HeadsetInstructionPanelOn;
-        //    OVRManager.HMDUnmounted -= HeadsetInstructionPanelOff;
-        //}
-    
 
         void SetOculusMode()
         {
-            collabToggle.interactable = true;
             UnityEngine.XR.XRSettings.enabled = true;
             XRSettings.LoadDeviceByName("Oculus");
-            DesktopCam.SetActive(false);
-            OculusCam.SetActive(true);
+           
             for (int i = 0; i < DesktopGO.Count; i++)
             {
                 DesktopGO[i].SetActive(false);
@@ -59,10 +51,7 @@ namespace AL
 
         void SetDesktopMode()
         {
-            meetingPanel.SetActive(false);
             UnityEngine.XR.XRSettings.enabled = false;
-            DesktopCam.SetActive(true);
-            OculusCam.SetActive(false);
             for (int i = 0; i < DesktopGO.Count; i++)
             {
                 DesktopGO[i].SetActive(true);
@@ -78,14 +67,18 @@ namespace AL
 
         void HeadsetInstructionPanelOn()
         {
+            print("HeadsetInstructionPanelOn");
             headsetInstructionPanel.SetActive(true);
+            Coordinator.instance.audioManager.Play("background");
         }
 
         void HeadsetInstructionPanelOff()
         {
+            print("HeadsetInstructionPanelOff");
             headsetInstructionPanel.SetActive(false);
+            Coordinator.instance.audioManager.Pause("background");
         }
-     
+
     }
 
 }
