@@ -17,6 +17,7 @@ namespace AL.Web
         public void Login()
         {
             loginScreen.SetActive(false);
+            usernameText.text = username.text;
             username.text = "";
             password.text = "";
         }

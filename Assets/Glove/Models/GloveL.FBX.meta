@@ -1,0 +1,684 @@
+fileFormatVersion: 2
+guid: 5cce624b7740201419bb38dd7b509ef5
+ModelImporter:
+  serializedVersion: 23
+  fileIDToRecycleName:
+    100000: Arm Bone L
+    100002: Finger Index Bone L1
+    100004: Finger Index Bone L2
+    100006: Finger Index Bone L3
+    100008: Finger Index Bone L4
+    100010: Finger Middle Bone L1
+    100012: Finger Middle Bone L2
+    100014: Finger Middle Bone L3
+    100016: Finger Middle Bone L4
+    100018: Finger Pinky Bone L1
+    100020: Finger Pinky Bone L2
+    100022: Finger Pinky Bone L3
+    100024: Finger Pinky Bone L4
+    100026: Finger Ring Bone L1
+    100028: Finger Ring Bone L2
+    100030: Finger Ring Bone L3
+    100032: Finger Ring Bone L4
+    100034: Finger Thumb Bone L1
+    100036: Finger Thumb Bone L2
+    100038: Finger Thumb Bone L3
+    100040: //RootNode
+    100042: HandDummy
+    100044: Wrist Bone L
+    100046: Zero_Gravity_Glove_L
+    400000: Arm Bone L
+    400002: Finger Index Bone L1
+    400004: Finger Index Bone L2
+    400006: Finger Index Bone L3
+    400008: Finger Index Bone L4
+    400010: Finger Middle Bone L1
+    400012: Finger Middle Bone L2
+    400014: Finger Middle Bone L3
+    400016: Finger Middle Bone L4
+    400018: Finger Pinky Bone L1
+    400020: Finger Pinky Bone L2
+    400022: Finger Pinky Bone L3
+    400024: Finger Pinky Bone L4
+    400026: Finger Ring Bone L1
+    400028: Finger Ring Bone L2
+    400030: Finger Ring Bone L3
+    400032: Finger Ring Bone L4
+    400034: Finger Thumb Bone L1
+    400036: Finger Thumb Bone L2
+    400038: Finger Thumb Bone L3
+    400040: //RootNode
+    400042: HandDummy
+    400044: Wrist Bone L
+    400046: Zero_Gravity_Glove_L
+    4300000: Zero_Gravity_Glove_L
+    7400000: HandIdle
+    7400002: HandOpenPose
+    7400004: HandHoldPose
+    7400006: HandPointingPose
+    7400008: HandHold2Pose
+    7400010: HandTyping
+    9500000: //RootNode
+    13700000: Zero_Gravity_Glove_L
+  externalObjects: {}
+  materials:
+    importMaterials: 0
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 0
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: HandIdle
+      takeName: Gloves01
+      firstFrame: 8
+      lastFrame: 69
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 1
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: HandDummy
+        weight: 1
+      - path: HandDummy/Arm Bone L
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Index Bone L1
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Index Bone L1/Finger Index
+          Bone L2
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Index Bone L1/Finger Index
+          Bone L2/Finger Index Bone L3
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Index Bone L1/Finger Index
+          Bone L2/Finger Index Bone L3/Finger Index Bone L4
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Middle Bone L1
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Middle Bone L1/Finger Middle
+          Bone L2
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Middle Bone L1/Finger Middle
+          Bone L2/Finger Middle Bone L3
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Middle Bone L1/Finger Middle
+          Bone L2/Finger Middle Bone L3/Finger Middle Bone L4
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Pinky Bone L1
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Pinky Bone L1/Finger Pinky
+          Bone L2
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Pinky Bone L1/Finger Pinky
+          Bone L2/Finger Pinky Bone L3
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Pinky Bone L1/Finger Pinky
+          Bone L2/Finger Pinky Bone L3/Finger Pinky Bone L4
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Ring Bone L1
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Ring Bone L1/Finger Ring Bone
+          L2
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Ring Bone L1/Finger Ring Bone
+          L2/Finger Ring Bone L3
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Ring Bone L1/Finger Ring Bone
+          L2/Finger Ring Bone L3/Finger Ring Bone L4
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Thumb Bone L1
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Thumb Bone L1/Finger Thumb
+          Bone L2
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Thumb Bone L1/Finger Thumb
+          Bone L2/Finger Thumb Bone L3
+        weight: 1
+      - path: Zero_Gravity_Glove_L
+        weight: 1
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 2
+    - serializedVersion: 16
+      name: HandOpenPose
+      takeName: Gloves01
+      firstFrame: 2
+      lastFrame: 2.1
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 1
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: HandDummy
+        weight: 1
+      - path: HandDummy/Arm Bone L
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Index Bone L1
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Index Bone L1/Finger Index
+          Bone L2
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Index Bone L1/Finger Index
+          Bone L2/Finger Index Bone L3
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Index Bone L1/Finger Index
+          Bone L2/Finger Index Bone L3/Finger Index Bone L4
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Middle Bone L1
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Middle Bone L1/Finger Middle
+          Bone L2
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Middle Bone L1/Finger Middle
+          Bone L2/Finger Middle Bone L3
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Middle Bone L1/Finger Middle
+          Bone L2/Finger Middle Bone L3/Finger Middle Bone L4
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Pinky Bone L1
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Pinky Bone L1/Finger Pinky
+          Bone L2
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Pinky Bone L1/Finger Pinky
+          Bone L2/Finger Pinky Bone L3
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Pinky Bone L1/Finger Pinky
+          Bone L2/Finger Pinky Bone L3/Finger Pinky Bone L4
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Ring Bone L1
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Ring Bone L1/Finger Ring Bone
+          L2
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Ring Bone L1/Finger Ring Bone
+          L2/Finger Ring Bone L3
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Ring Bone L1/Finger Ring Bone
+          L2/Finger Ring Bone L3/Finger Ring Bone L4
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Thumb Bone L1
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Thumb Bone L1/Finger Thumb
+          Bone L2
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Thumb Bone L1/Finger Thumb
+          Bone L2/Finger Thumb Bone L3
+        weight: 1
+      - path: Zero_Gravity_Glove_L
+        weight: 1
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: HandHoldPose
+      takeName: Gloves01
+      firstFrame: 3
+      lastFrame: 3.1
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 1
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: HandDummy
+        weight: 1
+      - path: HandDummy/Arm Bone L
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Index Bone L1
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Index Bone L1/Finger Index
+          Bone L2
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Index Bone L1/Finger Index
+          Bone L2/Finger Index Bone L3
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Index Bone L1/Finger Index
+          Bone L2/Finger Index Bone L3/Finger Index Bone L4
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Middle Bone L1
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Middle Bone L1/Finger Middle
+          Bone L2
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Middle Bone L1/Finger Middle
+          Bone L2/Finger Middle Bone L3
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Middle Bone L1/Finger Middle
+          Bone L2/Finger Middle Bone L3/Finger Middle Bone L4
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Pinky Bone L1
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Pinky Bone L1/Finger Pinky
+          Bone L2
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Pinky Bone L1/Finger Pinky
+          Bone L2/Finger Pinky Bone L3
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Pinky Bone L1/Finger Pinky
+          Bone L2/Finger Pinky Bone L3/Finger Pinky Bone L4
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Ring Bone L1
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Ring Bone L1/Finger Ring Bone
+          L2
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Ring Bone L1/Finger Ring Bone
+          L2/Finger Ring Bone L3
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Ring Bone L1/Finger Ring Bone
+          L2/Finger Ring Bone L3/Finger Ring Bone L4
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Thumb Bone L1
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Thumb Bone L1/Finger Thumb
+          Bone L2
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Thumb Bone L1/Finger Thumb
+          Bone L2/Finger Thumb Bone L3
+        weight: 1
+      - path: Zero_Gravity_Glove_L
+        weight: 1
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: HandPointingPose
+      takeName: Gloves01
+      firstFrame: 4
+      lastFrame: 4.1
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 1
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: HandDummy
+        weight: 1
+      - path: HandDummy/Arm Bone L
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Index Bone L1
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Index Bone L1/Finger Index
+          Bone L2
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Index Bone L1/Finger Index
+          Bone L2/Finger Index Bone L3
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Index Bone L1/Finger Index
+          Bone L2/Finger Index Bone L3/Finger Index Bone L4
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Middle Bone L1
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Middle Bone L1/Finger Middle
+          Bone L2
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Middle Bone L1/Finger Middle
+          Bone L2/Finger Middle Bone L3
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Middle Bone L1/Finger Middle
+          Bone L2/Finger Middle Bone L3/Finger Middle Bone L4
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Pinky Bone L1
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Pinky Bone L1/Finger Pinky
+          Bone L2
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Pinky Bone L1/Finger Pinky
+          Bone L2/Finger Pinky Bone L3
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Pinky Bone L1/Finger Pinky
+          Bone L2/Finger Pinky Bone L3/Finger Pinky Bone L4
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Ring Bone L1
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Ring Bone L1/Finger Ring Bone
+          L2
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Ring Bone L1/Finger Ring Bone
+          L2/Finger Ring Bone L3
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Ring Bone L1/Finger Ring Bone
+          L2/Finger Ring Bone L3/Finger Ring Bone L4
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Thumb Bone L1
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Thumb Bone L1/Finger Thumb
+          Bone L2
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Thumb Bone L1/Finger Thumb
+          Bone L2/Finger Thumb Bone L3
+        weight: 1
+      - path: Zero_Gravity_Glove_L
+        weight: 1
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: HandHold2Pose
+      takeName: Gloves01
+      firstFrame: 5
+      lastFrame: 5.1
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 1
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: HandDummy
+        weight: 1
+      - path: HandDummy/Arm Bone L
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Index Bone L1
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Index Bone L1/Finger Index
+          Bone L2
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Index Bone L1/Finger Index
+          Bone L2/Finger Index Bone L3
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Index Bone L1/Finger Index
+          Bone L2/Finger Index Bone L3/Finger Index Bone L4
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Middle Bone L1
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Middle Bone L1/Finger Middle
+          Bone L2
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Middle Bone L1/Finger Middle
+          Bone L2/Finger Middle Bone L3
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Middle Bone L1/Finger Middle
+          Bone L2/Finger Middle Bone L3/Finger Middle Bone L4
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Pinky Bone L1
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Pinky Bone L1/Finger Pinky
+          Bone L2
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Pinky Bone L1/Finger Pinky
+          Bone L2/Finger Pinky Bone L3
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Pinky Bone L1/Finger Pinky
+          Bone L2/Finger Pinky Bone L3/Finger Pinky Bone L4
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Ring Bone L1
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Ring Bone L1/Finger Ring Bone
+          L2
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Ring Bone L1/Finger Ring Bone
+          L2/Finger Ring Bone L3
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Ring Bone L1/Finger Ring Bone
+          L2/Finger Ring Bone L3/Finger Ring Bone L4
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Thumb Bone L1
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Thumb Bone L1/Finger Thumb
+          Bone L2
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Thumb Bone L1/Finger Thumb
+          Bone L2/Finger Thumb Bone L3
+        weight: 1
+      - path: Zero_Gravity_Glove_L
+        weight: 1
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: HandTyping
+      takeName: Gloves01
+      firstFrame: 75
+      lastFrame: 95
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: HandDummy
+        weight: 1
+      - path: HandDummy/Arm Bone L
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Index Bone L1
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Index Bone L1/Finger Index
+          Bone L2
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Index Bone L1/Finger Index
+          Bone L2/Finger Index Bone L3
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Index Bone L1/Finger Index
+          Bone L2/Finger Index Bone L3/Finger Index Bone L4
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Middle Bone L1
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Middle Bone L1/Finger Middle
+          Bone L2
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Middle Bone L1/Finger Middle
+          Bone L2/Finger Middle Bone L3
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Middle Bone L1/Finger Middle
+          Bone L2/Finger Middle Bone L3/Finger Middle Bone L4
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Pinky Bone L1
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Pinky Bone L1/Finger Pinky
+          Bone L2
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Pinky Bone L1/Finger Pinky
+          Bone L2/Finger Pinky Bone L3
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Pinky Bone L1/Finger Pinky
+          Bone L2/Finger Pinky Bone L3/Finger Pinky Bone L4
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Ring Bone L1
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Ring Bone L1/Finger Ring Bone
+          L2
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Ring Bone L1/Finger Ring Bone
+          L2/Finger Ring Bone L3
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Ring Bone L1/Finger Ring Bone
+          L2/Finger Ring Bone L3/Finger Ring Bone L4
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Thumb Bone L1
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Thumb Bone L1/Finger Thumb
+          Bone L2
+        weight: 1
+      - path: HandDummy/Arm Bone L/Wrist Bone L/Finger Thumb Bone L1/Finger Thumb
+          Bone L2/Finger Thumb Bone L3
+        weight: 1
+      - path: Zero_Gravity_Glove_L
+        weight: 1
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 2
+    meshCompression: 0
+    addColliders: 0
+    importVisibility: 0
+    importBlendShapes: 1
+    importCameras: 0
+    importLights: 0
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    preserveHierarchy: 0
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+    previousCalculatedGlobalScale: 0.01
+    hasPreviousCalculatedGlobalScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 0
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

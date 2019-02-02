@@ -11,7 +11,7 @@ namespace AL.UI
         GameObject logoutInput, pointerClickDetector;
 
         [SerializeField]
-        RectTransform fulScreenVectorAnchor, smallScreenVectorAnchor, headsetInstructionVector, fulScreenVectorAnchorForTween, smallScreenVectorAnchorForTween;
+        RectTransform fulScreenVectorAnchor, smallScreenVectorAnchor, headsetInstructionVector;
 
         IEnumerator ToggleLogoutCoroutine = null;
 
@@ -28,14 +28,11 @@ namespace AL.UI
             logoutInput.SetActive(val);
             pointerClickDetector.SetActive(!val);
 
-            var referenceAnchor = val ? fulScreenVectorAnchorForTween : smallScreenVectorAnchorForTween;
-            headsetInstructionVector.Copy(referenceAnchor);
-
-            headsetInstructionVector.DOSizeDelta(val ? smallScreenVectorAnchorForTween.sizeDelta : fulScreenVectorAnchorForTween.sizeDelta, .5f, false);
+            var referenceAnchor = val ? smallScreenVectorAnchor : fulScreenVectorAnchor;
+            headsetInstructionVector.DOSizeDelta(referenceAnchor.sizeDelta, .5f, false);
+            headsetInstructionVector.DOLocalMove(referenceAnchor.localPosition, .5f, false);
 
             yield return new WaitForSeconds(.6f);
-            referenceAnchor = val ? smallScreenVectorAnchor : fulScreenVectorAnchor;
-            headsetInstructionVector.Copy(referenceAnchor);
 
             if (val)
             {
@@ -46,7 +43,7 @@ namespace AL.UI
 
         public void ResetLogoutControl()
         {
-            headsetInstructionVector.sizeDelta = fulScreenVectorAnchor.sizeDelta;
+            headsetInstructionVector.Copy(fulScreenVectorAnchor);
             pointerClickDetector.SetActive(true);
             logoutInput.SetActive(false);
         }

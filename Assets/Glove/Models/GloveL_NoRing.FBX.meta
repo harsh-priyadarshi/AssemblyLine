@@ -1,0 +1,142 @@
+fileFormatVersion: 2
+guid: cd329b45141b7e24795d8e65f83ca742
+timeCreated: 1514009988
+licenseType: Store
+ModelImporter:
+  serializedVersion: 22
+  fileIDToRecycleName:
+    100000: Arm Bone L
+    100002: Finger Index Bone L1
+    100004: Finger Index Bone L2
+    100006: Finger Index Bone L3
+    100008: Finger Index Bone L4
+    100010: Finger Middle Bone L1
+    100012: Finger Middle Bone L2
+    100014: Finger Middle Bone L3
+    100016: Finger Middle Bone L4
+    100018: Finger Pinky Bone L1
+    100020: Finger Pinky Bone L2
+    100022: Finger Pinky Bone L3
+    100024: Finger Pinky Bone L4
+    100026: Finger Ring Bone L1
+    100028: Finger Ring Bone L2
+    100030: Finger Ring Bone L3
+    100032: Finger Ring Bone L4
+    100034: Finger Thumb Bone L1
+    100036: Finger Thumb Bone L2
+    100038: Finger Thumb Bone L3
+    100040: //RootNode
+    100042: HandDummy
+    100044: Wrist Bone L
+    100046: Zero_Gravity_Glove_L
+    400000: Arm Bone L
+    400002: Finger Index Bone L1
+    400004: Finger Index Bone L2
+    400006: Finger Index Bone L3
+    400008: Finger Index Bone L4
+    400010: Finger Middle Bone L1
+    400012: Finger Middle Bone L2
+    400014: Finger Middle Bone L3
+    400016: Finger Middle Bone L4
+    400018: Finger Pinky Bone L1
+    400020: Finger Pinky Bone L2
+    400022: Finger Pinky Bone L3
+    400024: Finger Pinky Bone L4
+    400026: Finger Ring Bone L1
+    400028: Finger Ring Bone L2
+    400030: Finger Ring Bone L3
+    400032: Finger Ring Bone L4
+    400034: Finger Thumb Bone L1
+    400036: Finger Thumb Bone L2
+    400038: Finger Thumb Bone L3
+    400040: //RootNode
+    400042: HandDummy
+    400044: Wrist Bone L
+    400046: Zero_Gravity_Glove_L
+    4300000: Zero_Gravity_Glove_L
+    7400000: Take 001
+    9500000: //RootNode
+    13700000: Zero_Gravity_Glove_L
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Glove
+    second: {fileID: 2100000, guid: 48b2388520895564284322c9d825fbb4, type: 2}
+  materials:
+    importMaterials: 0
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 0
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 2
+    meshCompression: 0
+    addColliders: 0
+    importVisibility: 0
+    importBlendShapes: 1
+    importCameras: 0
+    importLights: 0
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
