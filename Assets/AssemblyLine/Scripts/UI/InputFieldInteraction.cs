@@ -26,8 +26,7 @@ namespace AL.UI
         // Disabled for now
         public virtual void OnSelect(BaseEventData eventData)
         {
-            //Hotkeys.HotKeyEnabled = false;
-            //UIInteractionManager.insideInputField = true;
+            HardSelect();
         }
 
         public override void ToggleOutlineHighlight(bool val)

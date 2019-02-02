@@ -69,14 +69,14 @@ namespace AL
         {
             print("HeadsetInstructionPanelOn");
             headsetInstructionPanel.SetActive(true);
-            Coordinator.instance.audioManager.Play("background");
+            Coordinator.instance.audioManager.Pause("background");
         }
 
         void HeadsetInstructionPanelOff()
         {
             print("HeadsetInstructionPanelOff");
             headsetInstructionPanel.SetActive(false);
-            Coordinator.instance.audioManager.Pause("background");
+            Coordinator.instance.audioManager.Play("background");
         }
 
     }

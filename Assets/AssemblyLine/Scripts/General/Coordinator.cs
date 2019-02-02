@@ -15,6 +15,7 @@ namespace AL
         public AppTheme appTheme;
         public AudioManager audioManager;
         public DesktopScreenController desktopScreenController;
+        public HandStateInput handStateInput;
 
         private void Awake()
         {
