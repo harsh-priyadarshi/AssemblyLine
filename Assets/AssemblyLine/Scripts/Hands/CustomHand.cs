@@ -13,26 +13,50 @@ namespace AL
         [SerializeField]
         private bool activationBool;
 
+        public string name
+        {
+            get
+            {
+                return button.ToString();
+            }
+        }
+
         public bool Get(OVRInput.Controller controller)
         {
             return OVRInput.Get(button, controller) == activationBool;
         }
 
-        public bool GetDown(OVRInput.Controller controller)
+        public bool GetOn(OVRInput.Controller controller)
         {
             if (activationBool && OVRInput.GetDown(button, controller))
+            {
+                //Debug.Log(button.ToString() + " get on true");
                 return true;
-            else if (!activationBool && OVRInput.GetUp(button))
+            }
+            else if (!activationBool && OVRInput.GetUp(button, controller))
+            {
+                //Debug.Log(button.ToString() + " get on true");
                 return true;
+            }
+            //Debug.Log(button.ToString() + " get on false");
+            
             return false;   
         }
 
-        public bool GetUp(OVRInput.Controller controller)
+        public bool GetOff(OVRInput.Controller controller)
         {
             if (activationBool && OVRInput.GetUp(button, controller))
+            {
+                //Debug.Log(button.ToString() + " get off true");
                 return true;
+            }
             else if (!activationBool && OVRInput.GetDown(button, controller))
+            {
+                //Debug.Log(button.ToString() + " get off true");
                 return true;
+            }
+
+            //Debug.Log(button.ToString() + " get off false");
             return false;
         }
     }
@@ -45,21 +69,38 @@ namespace AL
         [SerializeField]
         private bool activationBool;
 
+        public string name
+        {
+            get
+            {
+                return nearTouchKey.ToString();
+            }
+        }
+
         public bool Get(OVRInput.Controller controller)
         {
             return OVRInput.Get(nearTouchKey, controller) == activationBool;
         }
 
-        public bool GetDown(OVRInput.Controller controller)
+        public bool GetOn(OVRInput.Controller controller)
         {
             if (activationBool && OVRInput.GetDown(nearTouchKey, controller))
+            {
+                //Debug.Log("NearTouchBasedGestureInput: " + nearTouchKey.ToString() + " true");
                 return true;
+            }
             else if (!activationBool && OVRInput.GetUp(nearTouchKey, controller))
+            {
+                //Debug.Log("NearTouchBasedGestureInput: " + nearTouchKey.ToString() + " true");
                 return true;
+            }
+
+            //Debug.Log("NearTouchBasedGestureInput: " + nearTouchKey.ToString() + " false");
+
             return false;
         }
 
-        public bool GetUp(OVRInput.Controller controller)
+        public bool GetOff(OVRInput.Controller controller)
         {
             if (activationBool && OVRInput.GetUp(nearTouchKey, controller))
                 return true;
@@ -72,6 +113,8 @@ namespace AL
     [Serializable]
     public class HandStateInputConfiguration
     {
+        [SerializeField]
+        private string name = "";
         [SerializeField]
         private List<ButtonBasedGestureInput> buttonBasedGestureInputs;
         [SerializeField]
@@ -87,46 +130,65 @@ namespace AL
             }
         }
 
-        public bool GetDown(OVRInput.Controller controller)
+        public bool GetOn(OVRInput.Controller controller)
         {
             bool anyKeyJustDown = false;
             
             foreach (var item in buttonBasedGestureInputs)
             {
                 if (!item.Get(controller))
+                {
+                    //Debug.Log("HandStateInputConfiguration: " + name + " get on: false");
                     return false;
-                anyKeyJustDown = item.GetDown(controller);
-            }
+                }
 
+                if (!anyKeyJustDown)
+                    anyKeyJustDown = item.GetOn(controller);
+            }
 
             foreach (var item in nearTouchBasedGestureInputs)
             {
-                if (item.Get(controller))
+                if (!item.Get(controller))
+                {
+                    //Debug.Log("HandStateInputConfiguration: " + name + " get on: false");
                     return false;
-                anyKeyJustDown = item.GetDown(controller);
+                }
+                if (!anyKeyJustDown)
+                    anyKeyJustDown = item.GetOn(controller);
             }
+
+            //Debug.Log("HandStateInputConfiguration: " + name + " get on: " + anyKeyJustDown.ToString());
 
             return anyKeyJustDown;
         }
 
-        public bool GetUp(OVRInput.Controller controller)
+        public bool GetOff(OVRInput.Controller controller)
         {
             bool anyKeyJustUp = false;
 
             foreach (var item in buttonBasedGestureInputs)
             {
-                if (!item.Get(controller))
+                if (!item.Get(controller) && !item.GetOff(controller))
+                {
+                    Debug.Log("HandStateInputConfiguration: " + name + " get off: false");
                     return false;
-                anyKeyJustUp = item.GetUp(controller);
+                }
+                if (!anyKeyJustUp)
+                    anyKeyJustUp = item.GetOff(controller);
             }
-
 
             foreach (var item in nearTouchBasedGestureInputs)
             {
-                if (item.Get(controller))
+                if (!item.Get(controller) && !item.GetOff(controller))
+                {
+                    Debug.Log("HandStateInputConfiguration: " + name + " get off: false");
                     return false;
-                anyKeyJustUp = item.GetUp(controller);
+                }
+                if (!anyKeyJustUp)
+                    anyKeyJustUp = item.GetOff(controller);
             }
+
+            Debug.Log("HandStateInputConfiguration: " + name + " get off: " + anyKeyJustUp.ToString());
 
             return anyKeyJustUp;
         }
@@ -139,15 +201,27 @@ namespace AL
         POINTING,
         SCRUE_GRABBING,
         BALL_GRABBING,
+        HOLDING,
         IDLE
+    }
+
+    public enum HandStateCategory
+    {
+        IDLE,
+        INPUT_BASED,
+        ACTION_BASED
     }
 
     public class CustomHand : MonoBehaviour
     {
-        public const string handOpenBoolString = "IsOpen";
-        public const string handPointingBoolString = "IsPointing";
-        public const string scrueGrabbingBoolString = "IsScrueGrabbing";
-        public const string ballGrabbingBoolString = "IsBallGrabbing";
+        private const string handOpenBoolString = "IsOpen";
+        private const string handPointingBoolString = "IsPointing";
+        private const string scrueGrabbingBoolString = "IsScrueGrabbing";
+        private const string ballGrabbingBoolString = "IsBallGrabbing";
+        private const string handHoldingBoolString = "IsHolding";
+        private const string holdToPointingTrigger = "HoldToPointing";
+        private const string pointingToHoldTrigger = "PointingToHold";
+        private static float stateTransitionDuration = .2f;
 
         [SerializeField]
         private OVRInput.Controller hand;
@@ -156,23 +230,68 @@ namespace AL
         [SerializeField]
 
         private HandState currentState = HandState.IDLE;
-        private string currentStateBoolString = "";
+        private HandStateCategory currentHandStateType = HandStateCategory.IDLE;
 
 
         private void Update()
         {
-            UpdateHandState();
+            if (currentHandStateType != HandStateCategory.ACTION_BASED)
+                UpdateHandState();
         }
 
         private void UpdateHandState()
         {
-            var newStateBoolString = "";
-            var newState = Coordinator.instance.handStateInput.CheckForNewInput(out newStateBoolString, hand);
+            var newState = Coordinator.instance.handStateInput.CheckForNewInput(hand);
 
             if (newState != HandState.NONE)
-                animator.SetBool(newStateBoolString, true);
-            else if (currentState != HandState.IDLE && Coordinator.instance.handStateInput.GetUp(newState, hand))
-                animator.SetBool(currentStateBoolString, false);
+            {
+                StartCoroutine(ResetCurrentBoolian(currentState));
+                animator.SetBool(StateToBoolianString(newState), true);
+                if (currentState == HandState.HOLDING && newState == HandState.POINTING)
+                    animator.SetTrigger(holdToPointingTrigger);
+                else if (currentState == HandState.POINTING && newState == HandState.HOLDING)
+                    animator.SetTrigger(pointingToHoldTrigger);
+
+                //animator.SetBool(StateToBoolianString(currentState), false);
+                UpdateCurrentState(newState, HandStateCategory.INPUT_BASED);
+            }
+            else if (currentHandStateType != HandStateCategory.IDLE && Coordinator.instance.handStateInput.GetUp(currentState, hand))
+            {
+                animator.SetBool(StateToBoolianString(currentState), false);
+                UpdateCurrentState(HandState.IDLE, HandStateCategory.IDLE);
+            }
+        }
+
+        IEnumerator ResetCurrentBoolian(HandState state)
+        {
+            yield return new WaitForSeconds(stateTransitionDuration+.1f);
+            animator.SetBool(StateToBoolianString(state), false);
+        }
+
+
+        private void UpdateCurrentState(HandState _currentState, HandStateCategory _currentStateType)
+        {
+            currentState = _currentState;
+            currentHandStateType = _currentStateType;
+        }
+
+        private string StateToBoolianString(HandState state)
+        {
+            switch (state)
+            {
+                case HandState.OPEN:
+                    return handOpenBoolString;
+                case HandState.POINTING:
+                    return handPointingBoolString;
+                case HandState.SCRUE_GRABBING:
+                    return scrueGrabbingBoolString;
+                case HandState.BALL_GRABBING:
+                    return ballGrabbingBoolString;
+                case HandState.HOLDING:
+                    return handHoldingBoolString;
+                default:
+                    return string.Empty;
+            }
         }
     }
 }

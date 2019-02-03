@@ -36,7 +36,6 @@ namespace AL.UI
                 shadow.effectColor = Coordinator.instance.appTheme.SelectedTheme.colorMix2;
             else if (!((TMPro.TMP_InputField)selectable).isFocused)
                 shadow.effectColor = Coordinator.instance.appTheme.SelectedTheme.panelInteractionOutline;
-            
         }
 
         // Input field interaction flag disabled for now

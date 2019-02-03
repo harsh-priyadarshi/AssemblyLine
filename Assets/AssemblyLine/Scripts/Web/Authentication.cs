@@ -14,6 +14,15 @@ namespace AL.Web
         [SerializeField]
         private TextMeshProUGUI usernameText;
 
+        private void Update()
+        {
+            if (password.isFocused && Input.GetKeyDown(KeyCode.Return))
+            {
+                print("EnterPress");
+                Login();
+            }
+        }
+
         public void Login()
         {
             loginScreen.SetActive(false);
