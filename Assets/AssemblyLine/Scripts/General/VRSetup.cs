@@ -1,7 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.XR;
+using AL.Audio;
 
 
 namespace AL
@@ -11,7 +13,13 @@ namespace AL
         public List<GameObject> DesktopGO;
         public List<GameObject> OculusGO;
         public GameObject headsetInstructionPanel;
-        
+
+        [SerializeField]
+        OVRInputModule ovrInputModule;
+        [SerializeField]
+        StandaloneInputModule standAloneInputModule;
+        [SerializeField]
+        GameObject desktoCanvas;
 
         //private void  Start()
         //{
@@ -20,61 +28,30 @@ namespace AL
 
         private void OnEnable()
         {
-            OVRManager.HMDMounted += HeadsetInstructionPanelOff;
-            OVRManager.HMDUnmounted += HeadsetInstructionPanelOn;
+            OVRManager.HMDMounted += OnHMDMount;
+            OVRManager.HMDUnmounted += OnHMDUnmount;
         }
 
         private void OnDisable()
         {
-            OVRManager.HMDMounted -= HeadsetInstructionPanelOn;
-            OVRManager.HMDUnmounted -= HeadsetInstructionPanelOff;
+            OVRManager.HMDMounted -= OnHMDUnmount;
+            OVRManager.HMDUnmounted -= OnHMDMount;
         }
 
-
-        void SetOculusMode()
-        {
-            UnityEngine.XR.XRSettings.enabled = true;
-            XRSettings.LoadDeviceByName("Oculus");
-           
-            for (int i = 0; i < DesktopGO.Count; i++)
-            {
-                DesktopGO[i].SetActive(false);
-            }
-
-            for (int i = 0; i < OculusGO.Count; i++)
-            {
-                OculusGO[i].SetActive(true);
-            }
-            headsetInstructionPanel.SetActive(true);
-            //HapticHelper.instance.Init();
-        }
-
-        void SetDesktopMode()
-        {
-            UnityEngine.XR.XRSettings.enabled = false;
-            for (int i = 0; i < DesktopGO.Count; i++)
-            {
-                DesktopGO[i].SetActive(true);
-            }
-
-            for (int i = 0; i < OculusGO.Count; i++)
-            {
-                OculusGO[i].SetActive(false);
-            }
-          
-            HeadsetInstructionPanelOff();
-        }
-
-        void HeadsetInstructionPanelOn()
+        void OnHMDUnmount()
         {
             headsetInstructionPanel.SetActive(true);
-            Coordinator.instance.audioManager.Pause("background");
+            Coordinator.instance.audioManager.Pause(AudioManager.backgroundMusic);
+            standAloneInputModule.enabled = true;
+            desktoCanvas.SetActive(true);
         }
 
-        void HeadsetInstructionPanelOff()
+        void OnHMDMount()
         {
             headsetInstructionPanel.SetActive(false);
-            Coordinator.instance.audioManager.Play("background");
+            Coordinator.instance.audioManager.Play(AudioManager.backgroundMusic);
+            standAloneInputModule.enabled = false;
+            desktoCanvas.SetActive(false);
         }
 
     }

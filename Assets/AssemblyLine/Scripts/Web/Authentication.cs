@@ -16,6 +16,9 @@ namespace AL.Web
         private TextMeshProUGUI usernameText;
         [SerializeField]
         private TextMeshProUGUI vrTitleText, vrLoginInstructionText;
+        [SerializeField]
+        private GameObject mainMenu;
+       
 
         public void OnInputEndEdit()
         {
@@ -46,6 +49,7 @@ namespace AL.Web
         {
             vrTitleText.gameObject.SetActive(val);
             vrLoginInstructionText.gameObject.SetActive(!val);
+            mainMenu.SetActive(val);
         }
 
     }

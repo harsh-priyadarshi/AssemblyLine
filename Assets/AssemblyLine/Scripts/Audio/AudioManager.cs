@@ -19,8 +19,11 @@ namespace AL.Audio
 
        
     }
+
     public class AudioManager : MonoBehaviour
     {
+        public const string backgroundMusic = "background-music";
+
         public Sound[] sounds;
         private void Awake()
         {

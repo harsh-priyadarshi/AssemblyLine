@@ -223,11 +223,17 @@ public class OVRRaycaster : GraphicRaycaster, IPointerEnterHandler
                 // mask/image intersection - See Unity docs on eventAlphaThreshold for when this does anything
                 if (graphic.Raycast(screenPos, eventCamera))
                 {
-                    RaycastHit hit;
-                    hit.graphic = graphic;
-                    hit.worldPos = worldPos;
-                    hit.fromMouse = false;
-                    s_SortedGraphics.Add(hit);
+                    #region MODIFIED_BY_HARSH
+                    // Extra condition added by Harsh
+                    if (graphic.raycastTarget)
+                    {
+                        RaycastHit hit;
+                        hit.graphic = graphic;
+                        hit.worldPos = worldPos;
+                        hit.fromMouse = false;
+                        s_SortedGraphics.Add(hit);
+                    }
+                    #endregion
                 }
             }
         }

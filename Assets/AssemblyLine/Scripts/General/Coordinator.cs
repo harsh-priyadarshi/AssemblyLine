@@ -16,6 +16,8 @@ namespace AL
         public AudioManager audioManager;
         public DesktopScreenController desktopScreenController;
         public HandStateInput handStateInput;
+        public Settings settings;
+        public OVRPlayerController ovrPlayerController;
 
         private void Awake()
         {
