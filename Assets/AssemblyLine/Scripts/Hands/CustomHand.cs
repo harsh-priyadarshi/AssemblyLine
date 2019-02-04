@@ -221,7 +221,7 @@ namespace AL
         private const string handHoldingBoolString = "IsHolding";
         private const string holdToPointingTrigger = "HoldToPointing";
         private const string pointingToHoldTrigger = "PointingToHold";
-        private static float stateTransitionDuration = .2f;
+        private static float stateTransitionDuration = .125f;
 
         [SerializeField]
         private OVRInput.Controller hand;
