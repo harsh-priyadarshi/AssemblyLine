@@ -105,6 +105,8 @@ public class OVRSceneSampleController : MonoBehaviour
     /// </summary>
     void Start()
     {
+        //Cursor lock and grid cube disabled by Harsh
+        #region MODIFIED_BY_HARSH
         // Make sure to hide cursor
         if (Application.isEditor == false)
         {
@@ -116,9 +118,10 @@ public class OVRSceneSampleController : MonoBehaviour
         if (cameraController != null)
         {
             // Add a GridCube component to this object
-            gridCube = gameObject.AddComponent<OVRGridCube>();
-            gridCube.SetOVRCameraController(ref cameraController);
+            //gridCube = gameObject.AddComponent<OVRGridCube>();
+            //gridCube.SetOVRCameraController(ref cameraController);
         }
+        #endregion
     }
 
 

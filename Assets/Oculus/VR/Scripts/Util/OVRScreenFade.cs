@@ -201,4 +201,11 @@ public class OVRScreenFade : MonoBehaviour
 			fadeRenderer.enabled = isFading;
         }
     }
+
+    #region MODIFIED_BY_HARSH
+    public void FadeIn()
+    {
+        StartCoroutine(Fade(1, 0));
+    }
+    #endregion
 }

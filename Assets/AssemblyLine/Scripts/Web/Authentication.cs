@@ -33,7 +33,7 @@ namespace AL.Web
             username.text = "";
             password.text = "";
             LoggedIn = true;
-            ToggleHomeLoginState(true);
+            Coordinator.instance.appManager.OnLoginToggle(true);
         }
 
         public void Logout()
@@ -42,15 +42,7 @@ namespace AL.Web
             Coordinator.instance.desktopScreenController.ResetLogoutControl();
             usernameText.text = "";
             LoggedIn = false;
-            ToggleHomeLoginState(false);
+            Coordinator.instance.appManager.OnLoginToggle(false);
         }
-
-        private void ToggleHomeLoginState(bool val)
-        {
-            vrTitleText.gameObject.SetActive(val);
-            vrLoginInstructionText.gameObject.SetActive(!val);
-            mainMenu.SetActive(val);
-        }
-
     }
 }

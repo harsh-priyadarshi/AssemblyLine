@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using System;
+using DG.Tweening;
+using System.Collections;
 
 namespace AL.Audio
 {
@@ -22,7 +24,8 @@ namespace AL.Audio
 
     public class AudioManager : MonoBehaviour
     {
-        public const string backgroundMusic = "background-music";
+        public const string backgroundMusic = "background_music";
+        public const string buttonClick = "button_click";
 
         public Sound[] sounds;
         private void Awake()
@@ -38,6 +41,28 @@ namespace AL.Audio
             }
         }
 
+        private IEnumerator FadeAudioToggle(AudioSource audioSource, bool play, float fadeDuration)
+        {
+            float initialVolume = audioSource.volume;
+            float elapsedTime = 0.0f;
+            while (elapsedTime < fadeDuration)
+            {
+                
+                elapsedTime += Time.deltaTime;
+                float currentVolume = Mathf.Lerp(play ? 0 : initialVolume, play ? initialVolume : 0, Mathf.Clamp01(elapsedTime / fadeDuration));
+                audioSource.volume = currentVolume;
+                yield return new WaitForEndOfFrame();
+            }
+
+            if (play)
+                audioSource.Play();
+            else
+            {
+                audioSource.Pause();
+                audioSource.volume = initialVolume;
+            }
+        }
+
         public void Play(string name)
         {
             //if (VRSetup.CurrentPlatform == Enums.ViewPlatform.Desktop)
@@ -49,7 +74,31 @@ namespace AL.Audio
                 Debug.LogError("sound: " + name + " not fouond");
                 return;
             }
+            if (s.audioSource.isPlaying)
+                s.audioSource.Stop();
             s.audioSource.Play();
+        }
+
+        public void Resume(string name)
+        {
+            Sound s = Array.Find(sounds, sound => sound.name == name);
+            if (s == null)
+            {
+                Debug.LogError("sound: " + name + " not fouond");
+                return;
+            }
+            s.audioSource.Play();
+        }
+
+        public void FadePause(string name, float duration)
+        {
+            Sound s = Array.Find(sounds, sound => sound.name == name);
+            if (s == null)
+            {
+                Debug.LogError("sound: " + name + " not fouond");
+                return;
+            }
+            StartCoroutine(FadeAudioToggle(s.audioSource, false, duration));
         }
 
         public void Pause(string name)
@@ -72,16 +121,6 @@ namespace AL.Audio
             if (s == null)
                 return null;
             return s.audioSource.clip;
-        }
-
-        public void PlayBackgroundMusic()
-        {
-
-        }
-
-        public void PauseBackgroundMusic()
-        {
-
         }
     }
 }

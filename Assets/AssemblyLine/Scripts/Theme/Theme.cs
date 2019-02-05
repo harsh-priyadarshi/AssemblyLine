@@ -9,6 +9,8 @@ namespace AL.Theme
     {
         #region UI
         public Color colorMix2, colorMix3, panelInteractionOutline;
+        public Color buttonHighlightTextColor = Color.white;
+        public Color buttonNormalTextColor = Color.white;
         public Color panelInteractionBackground;
         public Texture2D gradientTex;
         public Color vrControlDisabledColor;

@@ -18,6 +18,7 @@ namespace AL
         public HandStateInput handStateInput;
         public Settings settings;
         public OVRPlayerController ovrPlayerController;
+        public AppManager appManager;
 
         private void Awake()
         {

@@ -14,6 +14,8 @@ MonoBehaviour:
   colorMix2: {r: 0.9411765, g: 0.8165481, b: 0, a: 1}
   colorMix3: {r: 0.7735849, g: 0.7735849, b: 0.7735849, a: 1}
   panelInteractionOutline: {r: 0.7735849, g: 0.7735849, b: 0.7735849, a: 1}
+  buttonHighlightTextColor: {r: 1, g: 1, b: 1, a: 1}
+  buttonNormalTextColor: {r: 0.3301887, g: 0.3301887, b: 0.3301887, a: 1}
   panelInteractionBackground: {r: 0, g: 0, b: 0, a: 0}
   gradientTex: {fileID: 0}
   vrControlDisabledColor: {r: 0, g: 0, b: 0, a: 0}

@@ -31,6 +31,12 @@ namespace AL
     {
         #region KeyConfiguration
         public Key mainMenuKey = new Key(OVRInput.Button.One, OVRInput.Controller.LTouch);
+        [Range(0,1)]
+        public float buttonClickAnimationSpeed = .1f;
+        [Range(0, 1)]
+        public float buttonClickAnimationImpact = .1f;
+        [Range(0, 1)]
+        public float environmentSwitchDuration = .2f;
         #endregion
     }
 }

@@ -41,7 +41,8 @@ namespace AL
         void OnHMDUnmount()
         {
             headsetInstructionPanel.SetActive(true);
-            Coordinator.instance.audioManager.Pause(AudioManager.backgroundMusic);
+            if (Coordinator.instance.appManager.CurrentState == State.NONE)
+                Coordinator.instance.audioManager.Pause(AudioManager.backgroundMusic);
             standAloneInputModule.enabled = true;
             desktoCanvas.SetActive(true);
         }
@@ -49,7 +50,8 @@ namespace AL
         void OnHMDMount()
         {
             headsetInstructionPanel.SetActive(false);
-            Coordinator.instance.audioManager.Play(AudioManager.backgroundMusic);
+            if (Coordinator.instance.appManager.CurrentState == State.NONE)
+                Coordinator.instance.audioManager.Resume(AudioManager.backgroundMusic);
             standAloneInputModule.enabled = false;
             desktoCanvas.SetActive(false);
         }

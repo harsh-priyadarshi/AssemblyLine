@@ -18,7 +18,7 @@ namespace AL.UI
 
         public override void Reset()
         {
-            if (mouseHovering)
+            if (pointerHovering)
                 shadow.effectColor = Coordinator.instance.appTheme.SelectedTheme.colorMix2;
             else
                 shadow.effectColor = Coordinator.instance.appTheme.SelectedTheme.panelInteractionOutline;

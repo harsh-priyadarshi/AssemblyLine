@@ -11,3 +11,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 65f96bdb58254054282504d200bd595a, type: 3}
   m_Name: DefaultALConfiguration
   m_EditorClassIdentifier: 
+  mainMenuKey:
+    button: 256
+    controller: 1

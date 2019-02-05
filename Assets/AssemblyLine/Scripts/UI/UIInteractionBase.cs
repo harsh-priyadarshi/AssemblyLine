@@ -17,7 +17,7 @@ namespace AL.UI
         [SerializeField]
         protected Selectable selectable;
 
-        protected bool mouseHovering = false;
+        protected bool pointerHovering = false;
 
         private void Start()
         {
@@ -41,13 +41,13 @@ namespace AL.UI
 
         public void OnPointerEnter(PointerEventData eventData)
         {
-            mouseHovering = true;
+            pointerHovering = true;
             ToggleOutlineHighlight(true);
         }
 
         public void OnPointerExit(PointerEventData eventData)
         {
-            mouseHovering = false;
+            pointerHovering = false;
             ToggleOutlineHighlight(false);
         }
 
@@ -63,9 +63,9 @@ namespace AL.UI
 
         public virtual void ToggleOutlineHighlight(bool val)
         {
-            if (val && selectable.interactable)
+            if (val && shadow && selectable.interactable)
                 shadow.effectColor = Coordinator.instance.appTheme.SelectedTheme.colorMix2;
-            else
+            else if(shadow)
                 shadow.effectColor = Coordinator.instance.appTheme.SelectedTheme.panelInteractionOutline;
         }
 
@@ -75,7 +75,8 @@ namespace AL.UI
 
         public void HighlightOutline(Color col)
         {
-            shadow.effectColor = col;
+            if (shadow)
+                shadow.effectColor = col;
         }
 
         public void HardSelect()
