@@ -188,7 +188,7 @@ namespace AL
                     anyKeyJustUp = item.GetOff(controller);
             }
 
-            Debug.Log("HandStateInputConfiguration: " + name + " get off: " + anyKeyJustUp.ToString());
+            //Debug.Log("HandStateInputConfiguration: " + name + " get off: " + anyKeyJustUp.ToString());
 
             return anyKeyJustUp;
         }
@@ -245,7 +245,9 @@ namespace AL
 
             if (newState != HandState.NONE)
             {
-                StartCoroutine(ResetCurrentBoolian(currentState));
+                if (currentState != HandState.IDLE)
+                    StartCoroutine(ResetCurrentBoolian(currentState));
+                print("Going to set bool true for state: " + newState.ToString());
                 animator.SetBool(StateToBoolianString(newState), true);
                 if (currentState == HandState.HOLDING && newState == HandState.POINTING)
                     animator.SetTrigger(holdToPointingTrigger);
@@ -257,6 +259,7 @@ namespace AL
             }
             else if (currentHandStateType != HandStateCategory.IDLE && Coordinator.instance.handStateInput.GetUp(currentState, hand))
             {
+                print("Going to set bool false for state: " + currentState.ToString());
                 animator.SetBool(StateToBoolianString(currentState), false);
                 UpdateCurrentState(HandState.IDLE, HandStateCategory.IDLE);
             }
@@ -265,6 +268,7 @@ namespace AL
         IEnumerator ResetCurrentBoolian(HandState state)
         {
             yield return new WaitForSeconds(stateTransitionDuration+.1f);
+            print("Going to set bool false for state: " + state.ToString());
             animator.SetBool(StateToBoolianString(state), false);
         }
 

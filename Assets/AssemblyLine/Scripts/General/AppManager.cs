@@ -58,6 +58,9 @@ namespace AL
         private GameObject vrTitleText, vrLoginInstructionText;
         [SerializeField]
         private OVRScreenFade ovrScreenFade;
+        [SerializeField]
+        private GameObject trainingEnvironment, assessmentEnvironment;
+        private GameObject gameplayEnvironment;
 
         private GameObject gameplayHomeMenu;
         private State currentState = State.NONE;
@@ -104,6 +107,7 @@ namespace AL
             else
                 Coordinator.instance.audioManager.FadePause(AudioManager.backgroundMusic, ovrScreenFade.fadeTime);
             gameplayHomeMenu.SetActive(atHome);
+            gameplayEnvironment.SetActive(!atHome);
             Coordinator.instance.ovrPlayerController.SetHaltUpdateMovement(atHome);
             ovrScreenFade.FadeIn();
 
@@ -125,7 +129,9 @@ namespace AL
         {
             currentState = State.TRAINING;
             gameplayHomeMenu = trainingHomeMenu;
+            gameplayEnvironment = trainingEnvironment;
             gameplayHomeMenu.SetActive(true);
+            gameplayEnvironment.SetActive(true);
             mainHomeMenu.SetActive(false);
             ToggleHome();
         }
@@ -134,7 +140,9 @@ namespace AL
         {
             currentState = State.ASSESSMENT;
             gameplayHomeMenu = assessmentHomeMenu;
+            gameplayEnvironment = assessmentEnvironment;
             gameplayHomeMenu.SetActive(true);
+            gameplayEnvironment.SetActive(true);
             mainHomeMenu.SetActive(false);
             ToggleHome();
         }
@@ -143,10 +151,7 @@ namespace AL
         {
             //print("ToggleGameplay");
             if (currentState != State.NONE)
-            {
                 ToggleHome();
-                
-            }
         }
 
         public  void GameplayQuit()
