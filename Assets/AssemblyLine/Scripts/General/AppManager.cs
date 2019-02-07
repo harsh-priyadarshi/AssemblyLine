@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 using AL.Audio;
+using AL.Gameplay;
+using System;
 
 namespace AL
 {
+    [System.Serializable]
     /// <summary>
     /// Stores local values
     /// </summary>
@@ -47,6 +50,20 @@ namespace AL
         ASSESSMENT
     }
 
+    [Serializable]
+    public class NarrationSet
+    {
+        [SerializeField]
+        private List<string> narrations;
+        public string RetrieveNarration()
+        {
+            if (narrations.Count == 0)
+                return string.Empty;
+
+            return narrations[(int)UnityEngine.Random.Range(0, narrations.Count)];
+        }
+    }
+
     public class AppManager : MonoBehaviour {
         [SerializeField]
         private Material homeSkybox, gameplaySkybox;
@@ -61,6 +78,9 @@ namespace AL
         [SerializeField]
         private GameObject trainingEnvironment, assessmentEnvironment;
         private GameObject gameplayEnvironment;
+
+        [SerializeField]
+        NarrationSet wrongToolNarrationSet, wrongLocationNarrationSet, wrongPartNarrationSet;
 
         private GameObject gameplayHomeMenu;
         private State currentState = State.NONE;
@@ -164,13 +184,15 @@ namespace AL
 
         public void TrainingReset()
         {
-            //print("TrainingReset");
+            homePlayerPosition.Apply(Coordinator.instance.ovrPlayerController.transform);
+            gameplayPlayerPosition = homePlayerPosition;
             ToggleHome();
         }
 
         public void AssessmentReset()
         {
-            //print("AssessmentReset");
+            homePlayerPosition.Apply(Coordinator.instance.ovrPlayerController.transform);
+            gameplayPlayerPosition = homePlayerPosition;
             ToggleHome();
         }
 
@@ -182,7 +204,23 @@ namespace AL
                 mainHomeMenu.SetActive(val);
             else
                 gameplayHomeMenu.SetActive(val);
-
         }
+
+        #region GAMEPLAY
+        public string RetrieveNarration(MistakeLevel mistakeLevel)
+        {
+            switch (mistakeLevel)
+            {
+                case MistakeLevel.TOOL:
+                    return wrongToolNarrationSet.RetrieveNarration();
+                case MistakeLevel.PART:
+                    return wrongToolNarrationSet.RetrieveNarration();
+                case MistakeLevel.LOCATION:
+                    return wrongToolNarrationSet.RetrieveNarration();
+                default:
+                    return String.Empty;
+            }
+        }
+        #endregion
     }
 }

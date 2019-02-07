@@ -9,6 +9,7 @@ namespace AL.Theme
     {
         #region UI
         public Color colorMix2, colorMix3, panelInteractionOutline;
+        public Color objectHighlightColor = new Color32(255, 99, 71, 255);
         public Color buttonHighlightTextColor = Color.white;
         public Color buttonNormalTextColor = Color.white;
         public Color panelInteractionBackground;
