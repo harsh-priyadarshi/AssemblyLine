@@ -42,7 +42,7 @@ namespace AL
         {
             headsetInstructionPanel.SetActive(true);
             if (Coordinator.instance.appManager.CurrentState == State.NONE)
-                Coordinator.instance.audioManager.Pause(AudioManager.backgroundMusic);
+                Coordinator.instance.audioManager.Pause(AudioManager.homeBackgroundMusic);
             standAloneInputModule.enabled = true;
             desktoCanvas.SetActive(true);
         }
@@ -51,7 +51,7 @@ namespace AL
         {
             headsetInstructionPanel.SetActive(false);
             if (Coordinator.instance.appManager.CurrentState == State.NONE)
-                Coordinator.instance.audioManager.Resume(AudioManager.backgroundMusic);
+                Coordinator.instance.audioManager.Resume(AudioManager.homeBackgroundMusic);
             standAloneInputModule.enabled = false;
             desktoCanvas.SetActive(false);
         }

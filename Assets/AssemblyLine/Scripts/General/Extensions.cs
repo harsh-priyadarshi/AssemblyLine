@@ -1,6 +1,8 @@
-﻿using System.Collections;
+﻿using AL.Audio;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace AL
 {
@@ -23,6 +25,20 @@ namespace AL
             target.localPosition = reference.localPosition;
         }
 
+        public static void Copy(this Transform target, Transform reference)
+        {
+            target.parent = reference.parent;
+            target.localPosition = reference.localPosition;
+            target.localRotation = reference.localRotation;
+            target.localScale = reference.localScale;
+        }
+
         #endregion
+
+        public static Sound OnComplete(this Sound sound, UnityAction action)
+        {
+            sound.SetOnCompleteAction(action);
+            return sound;
+        }
     }
 }

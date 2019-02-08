@@ -8,118 +8,103 @@ namespace AL.Gameplay
     public enum StepStatus
     {
         NOT_STARTED,
-        ON_GOING,
+        ONGOING,
         COMPLETE
     }
 
-    public enum MistakeLevel
+    public enum Mistake
     {
         TOOL,
         PART,
         LOCATION
     }
 
+    public enum StepType
+    {
+        PART_PLACEMENT,
+        PART_INSTALLATION
+    }
+
+    [Serializable]
     public class Step
     {
-        public const string highlightShaderPath = "Ciconia Studio/Effects/Highlight/Opaque";
-        public const string blinkHighlightShaderPath = "Ciconia Studio/Effects/Highlight/Blink";
-        public const string normalShaderPath = "Ciconia Studio/Effects/Highlight/Opaque";
-
         [SerializeField]
-        GameObject correctTool, correctPart;
-
+        private string name;
+        [SerializeField]
+        private AssemblyComponent correctPart;
+        [SerializeField]
+        private GameObject correctPickSample;
+        
+        [SerializeField]
+        private StepType type;
         [SerializeField]
         private string narration;
 
+        private IHighlightable correctHighlightableSample;
+
         private int wrongAttemptCount = 0;
         private StepStatus status = StepStatus.NOT_STARTED;
-        private Color redHighlight = new Color(.45f, 0, 0, 4) / 4;
-        private Color greenHighlight = new Color(0, .45f, 0, 4) / 4;
+       
+        private GameObject pickedUpObject;
+        private IHighlightable pickedUpHighlightable;
 
-        /// <summary>
-        /// For indicating object
-        /// </summary>
-        /// <param name="obj"></param>
-        /// <param name="val"></param>
-        private void BlinkHighlight(GameObject obj)
-        {
-            ApplyShader(true, blinkHighlightShaderPath, obj, Coordinator.instance.appTheme.SelectedTheme.objectHighlightColor);
-        }
-
-        /// <summary>
-        /// For showing action correctness
-        /// </summary>
-        /// <param name="obj"></param>
-        /// <param name="correct"></param>
-        private void Highlight(GameObject obj, bool correct)
-        {
-            ApplyShader(true, highlightShaderPath, obj, correct ? greenHighlight : redHighlight);
-        }
-
-        private void Unhighlight(GameObject obj)
-        {
-            ApplyShader(false, normalShaderPath, obj, Coordinator.instance.appTheme.SelectedTheme.objectHighlightColor);
-        }
-
-        public void ApplyShader(bool highlight, string shaderPath, GameObject obj, Color highlightColor)
-        {
-            var renderer = obj.GetComponent<MeshRenderer>();
-            if (renderer != null)
-            {
-                foreach (Material mat in renderer.materials)
-                {
-
-                    try
-                    {
-                        //metallic = mat.GetFloat("_Metallic");
-                        //smoothness = mat.GetFloat("_Glossiness");
-                        //mat.SetFloat("_Glossiness", smoothness);
-                        //mat.SetFloat("_Metallic", metallic);
-                    }
-                    catch { }
-                    finally
-                    {
-                        mat.shader = Shader.Find(shaderPath);
-                        if (highlight)
-                        {
-                            mat.SetFloat("_FresnelSpread", 2.0f);
-                            mat.SetFloat("_FresnelStrength", 8);
-                            mat.SetColor("_HighlightColor", highlightColor);
-                        }
-                    }
-                }
-            }
-
-            foreach (Transform child in obj.transform)
-                ApplyShader(highlight, shaderPath, child.gameObject, highlightColor);
-
-        }
+        public StepType StepType { get { return type; } }
 
         private void InstructForStep()
         {
-            BlinkHighlight(correctTool);
-            BlinkHighlight(correctPart);
-            Coordinator.instance.audioManager.Play(narration);
+            correctHighlightableSample = correctPickSample.GetComponent<IHighlightable>();
+            correctPart.WatchForAssembly();
+            correctHighlightableSample.Highlight(HighlightType.BLILNK);
+            if (!string.IsNullOrEmpty(narration))
+                Coordinator.instance.audioManager.Play(narration);
         }
 
         public void InitiateStep()
         {
-            status = StepStatus.ON_GOING;
+            status = StepStatus.ONGOING;
             InstructForStep();
         }
 
         public void CompleteStep()
         {
+            correctPart.AssemblyComplete();
+            pickedUpObject.SetActive(false);
             status = StepStatus.COMPLETE;
-            Unhighlight(correctPart);
-            Unhighlight(correctTool);
         }
 
-        public void OnWrongAttempt(MistakeLevel mistakeLevel)
+        public void OnWrongAttempt(Mistake mistakeLevel)
         {
             var selectedNarration = Coordinator.instance.appManager.RetrieveNarration(mistakeLevel);
             Coordinator.instance.audioManager.Play(selectedNarration);
             wrongAttemptCount++;
         }
+
+        public void OnPlacement(bool correctPlacement)
+        {
+            pickedUpHighlightable.Highlight(HighlightType.NONE);
+            string placementNarration;
+            if (correctPlacement)
+                placementNarration = Coordinator.instance.appManager.RetrieveCorrectStepNarration();
+            else
+                placementNarration = Coordinator.instance.appManager.RetrieveNarration(Mistake.LOCATION);
+            Coordinator.instance.audioManager.Play(placementNarration);
+            if (correctPlacement && type == StepType.PART_PLACEMENT)
+                CompleteStep();
+        }
+
+        public bool ValidatePickup(GameObject obj)
+        {
+            if (obj.tag.Equals(correctPickSample.tag))
+            {
+                if (obj.Equals(correctPickSample))
+                    correctHighlightableSample.Highlight(HighlightType.NONE);
+                pickedUpObject = obj;
+                pickedUpHighlightable = pickedUpObject.GetComponent<IHighlightable>();
+                return true;
+            }
+            OnWrongAttempt(type == StepType.PART_PLACEMENT ? Mistake.PART : Mistake.TOOL);
+            return false;
+        }
+
     }
 }

@@ -296,16 +296,17 @@ Shader "Ciconia Studio/Effects/Highlight/Opaque" {
                 diffuseColor *= 1-specularMonochrome;
                 float3 diffuse = (directDiffuse + indirectDiffuse) * diffuseColor;
 ////// Emissive:
+				//_HighlightColor = _HighlightColor * abs( sin(_Time.y*3) );
                 float3 Fresnel = (_HighlightColor.rgb*((0.95*pow(1.0-max(0,dot(lerp( normalDirection, i.normalDir, _NormalDirection ), viewDirection)),_FresnelSpread))+0.05)*_FresnelStrength);
                 float3 FresnelEmissive = (node_8824+Fresnel);
                 float4 _EmissionMap_var = tex2D(_EmissionMap,TRANSFORM_TEX(i.uv0, _EmissionMap));
                 float3 Emissive = (_EmissionColor.rgb*_EmissionMap_var.rgb*_EmissionIntensity);
-                float3 emissive = (FresnelEmissive+Emissive);
+				float3 emissive = (FresnelEmissive + Emissive);
 /// Final Color:
                 float3 finalColor = diffuse/20 + specular + emissive;
                 fixed4 finalRGBA = fixed4(finalColor,1);
                 UNITY_APPLY_FOG(i.fogCoord, finalRGBA);
-                return finalRGBA;
+				return finalRGBA;
             }
             ENDCG
         }
@@ -523,6 +524,7 @@ Shader "Ciconia Studio/Effects/Highlight/Opaque" {
                 
                 float4 _MainTex_var = tex2D(_MainTex,TRANSFORM_TEX(i.uv0, _MainTex));
                 float3 node_8824 = (.5 * _Color.rgb*lerp(_MainTex_var.rgb,dot(_MainTex_var.rgb,float3(0.3,0.59,0.11)),_Desaturate));
+				//_HighlightColor = _HighlightColor * abs(sin(_Time.y * 3));
                 float3 Fresnel = (_HighlightColor.rgb*((0.95*pow(1.0-max(0,dot(lerp( normalDirection, i.normalDir, _NormalDirection ), viewDirection)),_FresnelSpread))+0.05)*_FresnelStrength);
                 float3 FresnelEmissive = (node_8824+Fresnel);
                 float4 _EmissionMap_var = tex2D(_EmissionMap,TRANSFORM_TEX(i.uv0, _EmissionMap));

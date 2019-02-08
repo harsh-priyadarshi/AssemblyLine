@@ -31,6 +31,7 @@ namespace AL
     {
         #region KeyConfiguration
         public Key mainMenuKey = new Key(OVRInput.Button.One, OVRInput.Controller.LTouch);
+        public Key gameplayStartKey = new Key(OVRInput.Button.One, OVRInput.Controller.RTouch);
         [Range(0,1)]
         public float buttonClickAnimationSpeed = .1f;
         [Range(0, 1)]
