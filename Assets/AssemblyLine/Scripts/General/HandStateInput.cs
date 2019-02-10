@@ -20,14 +20,18 @@ namespace AL
         public bool GetUp(HandState state, OVRInput.Controller controller)
         {
             var stateInput = handStateInputs.Find(item => item.HandState == state);
+            if (stateInput == null)
+                return false;
             return stateInput.GetOff(controller);
         }
 
-        public HandState CheckForNewInput(OVRInput.Controller controller)
+        public HandState CheckForGestureInput(OVRInput.Controller controller, bool resumeMode)
         {
             foreach (var item in handStateInputs)
             {
-                if(item.GetOn(controller))
+                if(resumeMode && item.Get(controller))
+                    return item.HandState;
+                else if (!resumeMode && item.GetOn(controller))
                     return item.HandState;
             }
             return HandState.NONE;

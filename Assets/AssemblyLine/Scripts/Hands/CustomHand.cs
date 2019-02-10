@@ -192,6 +192,29 @@ namespace AL
 
             return anyKeyJustUp;
         }
+
+        public bool Get(OVRInput.Controller controller)
+        {
+            foreach (var item in buttonBasedGestureInputs)
+            {
+                if (!item.Get(controller))
+                {
+                    //Debug.Log("HandStateInputConfiguration: " + name + " get on: false");
+                    return false;
+                }
+            }
+
+            foreach (var item in nearTouchBasedGestureInputs)
+            {
+                if (!item.Get(controller))
+                {
+                    //Debug.Log("HandStateInputConfiguration: " + name + " get on: false");
+                    return false;
+                }
+            }
+
+            return true;
+        }
     }
 
     public enum HandState
@@ -232,18 +255,17 @@ namespace AL
         private HandState currentState = HandState.IDLE;
         private HandStateCategory currentHandStateType = HandStateCategory.IDLE;
 
-
         private void Update()
         {
             if (currentHandStateType != HandStateCategory.ACTION_BASED)
-                UpdateHandState();
+                UpdateHandState(false);
         }
 
-        private void UpdateHandState()
+        private void UpdateHandState(bool resumeMode)
         {
-            var newState = Coordinator.instance.handStateInput.CheckForNewInput(hand);
+            var newState = Coordinator.instance.handStateInput.CheckForGestureInput(hand, resumeMode);
 
-            if (newState != HandState.NONE)
+            if (!resumeMode && newState != HandState.NONE)
             {
                 if (currentState != HandState.IDLE)
                     StartCoroutine(ResetCurrentBoolian(currentState));
@@ -256,7 +278,27 @@ namespace AL
                 //animator.SetBool(StateToBoolianString(currentState), false);
                 UpdateCurrentState(newState, HandStateCategory.INPUT_BASED);
             }
-            else if (currentHandStateType != HandStateCategory.IDLE && Coordinator.instance.handStateInput.GetUp(currentState, hand))
+            else if(resumeMode)
+            {
+                if (newState == HandState.NONE)
+                {
+                    StartCoroutine(ResetCurrentBoolian(currentState));
+                    UpdateCurrentState(HandState.IDLE, HandStateCategory.INPUT_BASED);
+                }
+                else
+                {
+                    if (currentState != HandState.IDLE)
+                        StartCoroutine(ResetCurrentBoolian(currentState));
+                    animator.SetBool(StateToBoolianString(newState), true);
+                    if (currentState == HandState.HOLDING && newState == HandState.POINTING)
+                        animator.SetTrigger(holdToPointingTrigger);
+                    else if (currentState == HandState.POINTING && newState == HandState.HOLDING)
+                        animator.SetTrigger(pointingToHoldTrigger);
+
+                    UpdateCurrentState(newState, HandStateCategory.INPUT_BASED);
+                }
+            }
+            else if (currentHandStateType != HandStateCategory.IDLE && !resumeMode && Coordinator.instance.handStateInput.GetUp(currentState, hand))
             {
                 animator.SetBool(StateToBoolianString(currentState), false);
                 UpdateCurrentState(HandState.IDLE, HandStateCategory.IDLE);
@@ -265,6 +307,7 @@ namespace AL
 
         IEnumerator ResetCurrentBoolian(HandState state)
         {
+            //Debug.LogError("ResetCurrentBoolian");
             yield return new WaitForSeconds(stateTransitionDuration+.1f);
             animator.SetBool(StateToBoolianString(state), false);
         }
@@ -293,6 +336,34 @@ namespace AL
                 default:
                     return string.Empty;
             }
+        }
+
+        public void SetCustomPose(HandState handState)
+        {
+            //Debug.LogError("SetCustomPose: "+ handState.ToString() + " " + hand.ToString());
+            switch (handState)
+            {
+                case HandState.POINTING:
+                    if (currentState != HandState.POINTING)
+                    {
+                        animator.SetBool(handPointingBoolString, true);
+                        if (currentState == HandState.HOLDING)
+                            animator.SetTrigger(holdToPointingTrigger);
+                        currentState = HandState.POINTING;
+                    }
+                break;
+            }
+
+            if (handState != HandState.IDLE && handState != HandState.NONE)
+                currentHandStateType = HandStateCategory.ACTION_BASED;
+            else
+                currentHandStateType = HandStateCategory.IDLE;
+        }
+
+        public void ReleaseCustomPose()
+        {
+            //Debug.LogError("ReleaseCustomPose: "+ hand.ToString());
+            UpdateHandState(true);
         }
     }
 }

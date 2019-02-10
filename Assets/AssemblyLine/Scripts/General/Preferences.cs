@@ -34,7 +34,7 @@ namespace AL
         public Key gameplayStartKey = new Key(OVRInput.Button.One, OVRInput.Controller.RTouch);
 
         [Header("Button Interaction")]
-        [Range(0,1)]
+        [Range(.1f, 1)]
         public float buttonClickAnimationSpeed = .1f;
         [Range(0, 1)]
         public float buttonClickAnimationImpact = .1f;
@@ -47,5 +47,9 @@ namespace AL
 
         [Header("Audio")]
         public float narrationMinimumGap = .4f;
+
+        [Header("UI")]
+        public float handHoverRange = .6f;
+        public float handHoverEndDistance = .8f;
     }
 }

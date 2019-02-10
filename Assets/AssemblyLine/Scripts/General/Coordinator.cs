@@ -21,6 +21,11 @@ namespace AL
         public AppManager appManager;
         public ModalWindow modalWindow;
 
+        [Header("Objects")]
+        public CustomHand leftHand;
+        public CustomHand rightHand;
+
+
         private void Awake()
         {
             instance = this;

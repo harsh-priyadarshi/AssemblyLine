@@ -40,5 +40,10 @@ namespace AL
             sound.SetOnCompleteAction(action);
             return sound;
         }
+
+        public static string Style(this string str, string style)
+        {
+            return "<style=" + style + ">" + str + "</style>";
+        }
     }
 }

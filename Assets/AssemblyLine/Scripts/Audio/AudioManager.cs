@@ -217,7 +217,7 @@ namespace AL.Audio
             
             ResetNarrationProcessor();
 
-            print("interrupted by: " + narrationName);
+            //print("interrupted by: " + narrationName);
 
             s.Play();
 
@@ -242,17 +242,17 @@ namespace AL.Audio
                 {
                     currentNarration = narrationQueue[0];
                     Play(currentNarration.Name);
-                    print("ProcessAudioQueue: " + currentNarration.Name);
+                    //print("ProcessAudioQueue: " + currentNarration.Name);
                 }
                 else
                 {
-                    print("ProcessAudioQueue: " + currentNarration.Name);
+                    //print("ProcessAudioQueue: " + currentNarration.Name);
                     Resume(currentNarration.Name);
                 }
 
                 //yield return new WaitForSeconds(Coordinator.instance.settings.SelectedPreferences.narrationMinimumGap);
 
-                print("Removing: " + currentNarration.Name + " from queue");
+                //print("Removing: " + currentNarration.Name + " from queue");
                 narrationQueue.Remove(currentNarration);
 
                 yield return new WaitForSeconds(currentNarration.RemainingLength);
@@ -273,9 +273,12 @@ namespace AL.Audio
                 narrationQueueProcessor = null;
             }
 
-            if (currentNarration != null &  currentNarration.IsInitialized)
+            if (currentNarration == null)
+                return;
+
+            if (currentNarration.IsInitialized)
             {
-                print(currentNarration.Name);
+                //print(currentNarration.Name);
                 currentNarration.FadeAudioToggle(false, narrationFadeDuration);
             }
         }
@@ -284,7 +287,7 @@ namespace AL.Audio
         {
             if (currentNarration != null && currentNarration.IsInitialized)
             {
-                print("Resume");
+                //print("Resume");
                 narrationQueueProcessor = ProcessAudioQueue();
                 StartCoroutine(narrationQueueProcessor);
                 currentNarration.FadeAudioToggle(true, narrationResumeDuration);

@@ -17,8 +17,10 @@ MonoBehaviour:
   gameplayStartKey:
     button: 1
     controller: 2
-  buttonClickAnimationSpeed: 0.1
-  buttonClickAnimationImpact: 0.1
+  buttonClickAnimationSpeed: 0.7
+  buttonClickAnimationImpact: 1
   environmentSwitchDuration: 0.2
   assemblyTweenLength: 0.4
   narrationMinimumGap: 0.8
+  handHoverRange: 0.22
+  handHoverEndDistance: 0.22

@@ -97,7 +97,10 @@ namespace AL
         public const string idleHighlightShaderPath = "Ciconia Studio/Effects/Highlight/Opaque";
         public const string blinkHighlightShaderPath = "Ciconia Studio/Effects/Highlight/BlinkHighlight";
         public const string transparentHighlightShaderPath = "Unlit/AL/TransparentHiglight";
+        public const string correctTextColorStyle = "Correct";
+        public const string errorTextColorStyle = "Error";
         public const string normalShaderPath = "Standard";
+
 
         [Header("Gameplay")]
         [SerializeField]
@@ -131,7 +134,6 @@ namespace AL
         private bool atHome = true;
         private CustomTransform homePlayerPosition, gameplayPlayerPosition;
         private IEnumerator toggleHomeCoroutine = null;
-
         private bool introDone = false;
 
         #region RESETTABLE_VARIABLES
@@ -140,6 +142,7 @@ namespace AL
         #endregion
 
         public State CurrentState { get { return currentState; } }
+        public bool AtHome { get { return atHome; } }
 
         private void Awake()
         {
@@ -326,7 +329,8 @@ namespace AL
 
         private IEnumerator ToggleHomeCoroutine(UnityAction onCompleteAction)
         {
-            atHome = !atHome;
+;           atHome = !atHome;
+            print("ToggleHomeCoroutine: " + atHome);
             ovrScreenFade.FadeOut();
 
             yield return new WaitForSeconds(ovrScreenFade.fadeTime);
@@ -351,6 +355,7 @@ namespace AL
 
             RenderSettings.skybox = atHome ? homeSkybox : gameplaySkybox;
             homeCanvas.SetActive(atHome);
+            Coordinator.instance.modalWindow.OnHomeToggle();
 
             if (atHome)
                 Coordinator.instance.audioManager.Resume(AudioManager.homeBackgroundMusic, ovrScreenFade.fadeTime);
@@ -432,7 +437,8 @@ namespace AL
                 totalTimeTaken += item.TimeTaken;
                 totalNumberOfWrongAttemps += item.WrongAttemptCount;
             }
-            var result = "TOTAL TIME TAKEN: " + totalTimeTaken + "\n" + "NUMBER OF WRONG ATTEMPTS: " + totalNumberOfWrongAttemps;
+
+            var result = "Time taken: " + (int)totalTimeTaken + " seconds\n" + "Wrong attempts: ".Style(errorTextColorStyle) + totalNumberOfWrongAttemps;
             Coordinator.instance.modalWindow.Show(UI.WindowType.RESULT, result);
 
             var finishNarration = RetrieveNarration(MultipleNarrationType.ASSEMBLY_FINISH);
