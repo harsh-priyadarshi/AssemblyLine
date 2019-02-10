@@ -29,15 +29,23 @@ namespace AL
     [CreateAssetMenu(fileName = "NewALSetting", menuName = "AL Settings")]
     public class Preferences : ScriptableObject
     {
-        #region KeyConfiguration
+        [Header("Key Configuration")]
         public Key mainMenuKey = new Key(OVRInput.Button.One, OVRInput.Controller.LTouch);
         public Key gameplayStartKey = new Key(OVRInput.Button.One, OVRInput.Controller.RTouch);
+
+        [Header("Button Interaction")]
         [Range(0,1)]
         public float buttonClickAnimationSpeed = .1f;
         [Range(0, 1)]
         public float buttonClickAnimationImpact = .1f;
         [Range(0, 1)]
         public float environmentSwitchDuration = .2f;
-        #endregion
+
+        [Header("Assembly")]
+        [Range(0, 1)]
+        public float assemblyTweenLength = .4f;
+
+        [Header("Audio")]
+        public float narrationMinimumGap = .4f;
     }
 }

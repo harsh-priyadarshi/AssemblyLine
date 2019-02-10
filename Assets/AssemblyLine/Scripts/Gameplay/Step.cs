@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using DG.Tweening;
 
 namespace AL.Gameplay
 {
@@ -26,7 +27,7 @@ namespace AL.Gameplay
     }
 
     [Serializable]
-    public class Step
+    public class Step : IResettable
     {
         [SerializeField]
         private string name;
@@ -40,21 +41,25 @@ namespace AL.Gameplay
         [SerializeField]
         private string narration;
 
-        private IHighlightable correctHighlightableSample;
-
+        private IAssemblyItem correctAssemblyItemSample;
         private int wrongAttemptCount = 0;
         private StepStatus status = StepStatus.NOT_STARTED;
-       
         private GameObject pickedUpObject;
-        private IHighlightable pickedUpHighlightable;
+        private IAssemblyItem pickedupAssemblyItem;
+        private float startTime, endTime;
 
         public StepType StepType { get { return type; } }
 
+        public float TimeTaken { get { return endTime - startTime; } }
+
+        public int WrongAttemptCount { get { return wrongAttemptCount; } }
+
+
         private void InstructForStep()
         {
-            correctHighlightableSample = correctPickSample.GetComponent<IHighlightable>();
-            correctPart.WatchForAssembly();
-            correctHighlightableSample.Highlight(HighlightType.BLILNK);
+            correctAssemblyItemSample = correctPickSample.GetComponent<IAssemblyItem>();
+            correctPart.WatchForAssembly(type);
+            correctAssemblyItemSample.Highlight(HighlightType.BLILNK);
             if (!string.IsNullOrEmpty(narration))
                 Coordinator.instance.audioManager.Play(narration);
         }
@@ -63,33 +68,34 @@ namespace AL.Gameplay
         {
             status = StepStatus.ONGOING;
             InstructForStep();
+            startTime = Time.time;
         }
 
         public void CompleteStep()
         {
-            correctPart.AssemblyComplete();
-            pickedUpObject.SetActive(false);
+            var tweenLength = Coordinator.instance.settings.SelectedPreferences.assemblyTweenLength;
+            correctPart.AssemblyComplete(tweenLength);
+            pickedupAssemblyItem.AssemblyComplete(tweenLength);
             status = StepStatus.COMPLETE;
+            endTime = Time.time;
         }
 
         public void OnWrongAttempt(Mistake mistakeLevel)
         {
             var selectedNarration = Coordinator.instance.appManager.RetrieveNarration(mistakeLevel);
-            Coordinator.instance.audioManager.Play(selectedNarration);
+            Coordinator.instance.audioManager.Interrupt(selectedNarration);
             wrongAttemptCount++;
         }
 
         public void OnPlacement(bool correctPlacement)
         {
-            pickedUpHighlightable.Highlight(HighlightType.NONE);
+            pickedupAssemblyItem.Highlight(HighlightType.NONE);
             string placementNarration;
             if (correctPlacement)
-                placementNarration = Coordinator.instance.appManager.RetrieveCorrectStepNarration();
+                placementNarration = Coordinator.instance.appManager.RetrieveNarration(MultipleNarrationType.CORRECT_STEP);
             else
                 placementNarration = Coordinator.instance.appManager.RetrieveNarration(Mistake.LOCATION);
-            Coordinator.instance.audioManager.Play(placementNarration);
-            if (correctPlacement && type == StepType.PART_PLACEMENT)
-                CompleteStep();
+            Coordinator.instance.audioManager.Interrupt(placementNarration);
         }
 
         public bool ValidatePickup(GameObject obj)
@@ -97,14 +103,21 @@ namespace AL.Gameplay
             if (obj.tag.Equals(correctPickSample.tag))
             {
                 if (obj.Equals(correctPickSample))
-                    correctHighlightableSample.Highlight(HighlightType.NONE);
+                    correctAssemblyItemSample.Highlight(HighlightType.NONE);
                 pickedUpObject = obj;
-                pickedUpHighlightable = pickedUpObject.GetComponent<IHighlightable>();
+                pickedupAssemblyItem = pickedUpObject.GetComponent<IAssemblyItem>();
                 return true;
             }
             OnWrongAttempt(type == StepType.PART_PLACEMENT ? Mistake.PART : Mistake.TOOL);
             return false;
         }
 
+        public void Reset()
+        {
+            wrongAttemptCount = 0;
+            status = StepStatus.NOT_STARTED;
+            pickedUpObject = null;
+            pickedupAssemblyItem = null;
+        }
     }
 }

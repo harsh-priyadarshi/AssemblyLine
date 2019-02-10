@@ -28,6 +28,9 @@ MonoBehaviour:
   InputFieldSelection: {r: 1, g: 1, b: 1, a: 1}
   InputFieldNormalColor: {r: 1, g: 1, b: 1, a: 1}
   PanelColor: {r: 0.078431375, g: 0.078431375, b: 0.101960786, a: 1}
+  ErrorPanelColor: {r: 1, g: 0, b: 0.16470589, a: 1}
+  WarningPanelColor: {r: 0.9411765, g: 0.8165481, b: 0, a: 1}
+  ResultPanelColor: {r: 0.08018869, g: 0.7161285, b: 1, a: 1}
   redGradient:
     serializedVersion: 2
     key0: {r: 1, g: 1, b: 1, a: 1}

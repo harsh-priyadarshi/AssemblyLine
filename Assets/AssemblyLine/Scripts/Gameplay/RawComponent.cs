@@ -1,13 +1,40 @@
-﻿using System.Collections;
+﻿using DG.Tweening;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace AL.Gameplay
 {
-    public class RawComponent : OVRGrabbable, IHighlightable
+    public class RawComponent : OVRGrabbable, IResettable, IAssemblyItem
     {
         private bool highlighted = false;
         private GameObject hovereObject;
+
+        CustomTransform originalTransform;
+
+        private IEnumerator onCompleteEnumerator;
+
+        protected override void Start()
+        {
+            base.Start();
+            Init();
+        }
+
+        private void Init()
+        {
+            originalTransform.Extract(transform);
+        }
+
+        private IEnumerator OnCompleteEnumerator(float tweenLength)
+        {
+            yield return new WaitForSeconds(tweenLength);
+            AssemblyComplete();
+        }
+
+        private void AssemblyComplete()
+        {
+            gameObject.SetActive(false);
+        }
 
         public override void GrabBegin(OVRGrabber hand, Collider grabPoint)
         {
@@ -68,5 +95,22 @@ namespace AL.Gameplay
             }
         }
 
+        public void Reset()
+        {
+            hovereObject = null;
+            Highlight(HighlightType.NONE);
+            originalTransform.Apply(transform);
+            gameObject.SetActive(true);
+        }
+
+        public void AssemblyComplete(float tweenLength)
+        {
+            if (onCompleteEnumerator != null)
+                StopCoroutine(onCompleteEnumerator);
+            onCompleteEnumerator = OnCompleteEnumerator(tweenLength);
+            StartCoroutine(onCompleteEnumerator);
+            transform.DOMove(hovereObject.transform.position, tweenLength);
+            transform.DORotate(hovereObject.transform.eulerAngles, tweenLength);
+        }
     }
 }

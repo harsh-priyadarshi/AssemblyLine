@@ -5,6 +5,7 @@ using AL.Audio;
 using AL.Gameplay;
 using System;
 using UnityEngine.Events;
+using System.Linq;
 
 namespace AL
 {
@@ -17,16 +18,18 @@ namespace AL
         private Vector3 position;
         private Quaternion rotation;
         private Vector3 scale;
+        private Transform parent;
 
         public Vector3 Position { get { return position; } }
         public Quaternion Rotation { get { return rotation; } }
         public Vector3 Scale { get { return scale; } }
 
-        public CustomTransform(Vector3 _position, Quaternion _rotation)
+        public CustomTransform(Vector3 _position, Quaternion _rotation, Transform _parent)
         {
             position = _position;
             rotation = _rotation;
             scale = Vector3.one;
+            parent = _parent;
         }
 
         public void Extract(Transform transform)
@@ -34,10 +37,12 @@ namespace AL
             position = transform.localPosition;
             rotation = transform.localRotation;
             scale = transform.localScale;
+            parent = transform.parent;
         }
 
         public void Apply(Transform transform)
         {
+            transform.SetParent(parent);
             transform.localPosition = position;
             transform.localRotation = rotation;
             transform.localScale = scale;
@@ -52,17 +57,39 @@ namespace AL
     }
 
     [Serializable]
+    public struct Narration
+    {
+        public string name;
+        public MultipleNarrationType narrationType;
+    }
+
+    [Serializable]
     public class NarrationSet
     {
         [SerializeField]
-        private List<string> narrations;
-        public string RetrieveNarration()
+        private List<Narration> narrations;
+
+        public string RetrieveNarration(MultipleNarrationType type)
         {
             if (narrations.Count == 0)
                 return string.Empty;
 
-            return narrations[(int)UnityEngine.Random.Range(0, narrations.Count)];
+            var requestedNarrationList = narrations.Where(item => item.narrationType == type).ToList();
+
+            if (requestedNarrationList.Count == 0)
+                return string.Empty;
+
+            return requestedNarrationList[(int)UnityEngine.Random.Range(0, requestedNarrationList.Count)].name;
         }
+    }
+
+    public enum MultipleNarrationType
+    {
+        ASSEMBLY_FINISH,
+        WRONG_TOOL,
+        WRONG_LOCATION,
+        WRONG_PART,
+        CORRECT_STEP
     }
 
     public class AppManager : MonoBehaviour {
@@ -92,7 +119,11 @@ namespace AL
         [SerializeField]
         private GameObject trainingEnvironment, assessmentEnvironment, assemblyObjects;
         [SerializeField]
-        NarrationSet wrongToolNarrationSet, wrongLocationNarrationSet, wrongPartNarrationSet, correctStepNarrationSet;
+        NarrationSet narrationSet;
+        [SerializeField]
+        List<AssemblyComponent> assemblyComponents;
+        [SerializeField]
+        List<RawComponent> rawComponents;
 
         private GameObject gameplayEnvironment;
         private GameObject gameplayHomeMenu;
@@ -128,6 +159,31 @@ namespace AL
                 InitiateNextStep();
                 gameplayStarted = true;
             }
+
+            //if (OVRInput.GetDown(OVRInput.Button.PrimaryHandTrigger, OVRInput.Controller.RTouch))
+            //{
+            //    if (Coordinator.instance.modalWindow.gameObject.activeSelf)
+            //    {
+            //        Coordinator.instance.modalWindow.Close();
+            //    }
+            //    else
+            //    {
+            //        Coordinator.instance.modalWindow.Show(UI.WindowType.ERROR, "Hi, this is dummy result");
+
+            //    }
+            //}
+
+        }
+
+        private void Reset()
+        {
+            gameplayStarted = false;
+            currentStepIndex = 0;
+            homePlayerPosition.Apply(Coordinator.instance.ovrPlayerController.transform);
+            gameplayPlayerPosition = homePlayerPosition;
+            assemblyObjects.SetActive(false);
+            Coordinator.instance.audioManager.Reset();
+            ComponentReset();
         }
 
         public void ApplyShader(bool CiconiaHighlight, string shaderPath, GameObject obj, Color color)
@@ -214,6 +270,8 @@ namespace AL
         public  void GameplayQuit()
         {
             //print("GameplayQuit");
+            Reset();
+
             currentState = State.NONE;
             gameplayHomeMenu.SetActive(false);
             mainHomeMenu.SetActive(true);
@@ -221,16 +279,22 @@ namespace AL
 
         public void TrainingReset()
         {
-            homePlayerPosition.Apply(Coordinator.instance.ovrPlayerController.transform);
-            gameplayPlayerPosition = homePlayerPosition;
+            Reset();
+            ToggleHome(null);
+        }
+        
+        public void AssessmentReset()
+        {
+            Reset();
             ToggleHome(null);
         }
 
-        public void AssessmentReset()
+        public void ComponentReset()
         {
-            homePlayerPosition.Apply(Coordinator.instance.ovrPlayerController.transform);
-            gameplayPlayerPosition = homePlayerPosition;
-            ToggleHome(null);
+            foreach (var item in assemblyComponents)
+                item.Reset();
+            foreach (var item in rawComponents)
+                item.Reset();
         }
 
         public void OnLoginToggle(bool val)
@@ -255,7 +319,7 @@ namespace AL
         {
             if (!introDone)
             {
-                Coordinator.instance.audioManager.Play(currentState == State.TRAINING ? "training_intro" : "assessment_intro");
+                Coordinator.instance.audioManager.Queue(currentState == State.TRAINING ? "training_intro" : "assessment_intro");
                 introDone = true;
             }
         }
@@ -270,7 +334,7 @@ namespace AL
             if (atHome)
             {
                 Coordinator.instance.audioManager.FadePause(currentState == State.TRAINING ? AudioManager.trainingBackgroundMusic : AudioManager.assessmentBackgroundMusic, ovrScreenFade.fadeTime);
-                Coordinator.instance.audioManager.FadePause(ovrScreenFade.fadeTime);
+                Coordinator.instance.audioManager.Pause(ovrScreenFade.fadeTime);
             }
             else
                 Coordinator.instance.audioManager.FadePause(AudioManager.homeBackgroundMusic, ovrScreenFade.fadeTime);
@@ -329,19 +393,19 @@ namespace AL
             switch (mistakeLevel)
             {
                 case Mistake.TOOL:
-                    return wrongToolNarrationSet.RetrieveNarration();
+                    return narrationSet.RetrieveNarration(MultipleNarrationType.WRONG_TOOL);
                 case Mistake.PART:
-                    return wrongPartNarrationSet.RetrieveNarration();
+                    return narrationSet.RetrieveNarration(MultipleNarrationType.WRONG_PART);
                 case Mistake.LOCATION:
-                    return wrongLocationNarrationSet.RetrieveNarration();
+                    return narrationSet.RetrieveNarration(MultipleNarrationType.WRONG_LOCATION);
                 default:
                     return String.Empty;
             }
         }
 
-        public string RetrieveCorrectStepNarration()
+        public string RetrieveNarration(MultipleNarrationType type)
         {
-            return correctStepNarrationSet.RetrieveNarration();
+            return narrationSet.RetrieveNarration(type);
         }
 
         public void OnObjectGrab(GameObject obj)
@@ -356,10 +420,23 @@ namespace AL
         public void OnToolGrab(GameObject obj)
         {
             print("OnToolGrab");
-            if (currentStepIndex < assemblySteps.Count && assemblySteps[currentStepIndex].StepType == StepType.PART_INSTALLATION)
-            {
+        }
 
+        public void Finish()
+        {
+            float totalTimeTaken = 0;
+            int totalNumberOfWrongAttemps = 0;
+
+            foreach (var item in assemblySteps)
+            {
+                totalTimeTaken += item.TimeTaken;
+                totalNumberOfWrongAttemps += item.WrongAttemptCount;
             }
+            var result = "TOTAL TIME TAKEN: " + totalTimeTaken + "\n" + "NUMBER OF WRONG ATTEMPTS: " + totalNumberOfWrongAttemps;
+            Coordinator.instance.modalWindow.Show(UI.WindowType.RESULT, result);
+
+            var finishNarration = RetrieveNarration(MultipleNarrationType.ASSEMBLY_FINISH);
+            Coordinator.instance.audioManager.Queue(finishNarration);
         }
 
         public void OnPlacement(bool correct)
@@ -367,8 +444,16 @@ namespace AL
             if (currentStepIndex < assemblySteps.Count && assemblySteps[currentStepIndex].StepType == StepType.PART_PLACEMENT)
             {
                 assemblySteps[currentStepIndex].OnPlacement(correct);
+                if (correct && assemblySteps[currentStepIndex].StepType == StepType.PART_PLACEMENT)
+                {
+                    assemblySteps[currentStepIndex].CompleteStep();
+                    currentStepIndex++;
+                    if (currentStepIndex == assemblySteps.Count)
+                        Finish();
+                }
             }
         }
+       
         #endregion
     }
 }

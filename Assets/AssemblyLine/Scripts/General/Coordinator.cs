@@ -19,6 +19,7 @@ namespace AL
         public Settings settings;
         public OVRPlayerController ovrPlayerController;
         public AppManager appManager;
+        public ModalWindow modalWindow;
 
         private void Awake()
         {

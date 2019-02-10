@@ -3,15 +3,20 @@ using System;
 using DG.Tweening;
 using System.Collections;
 using UnityEngine.Events;
+using AL.Gameplay;
+using System.Collections.Generic;
+using System.Reflection;
 
 namespace AL.Audio
 {
     [System.Serializable]
-    public class Sound
+    public class Sound : IResettable
     {
         private UnityAction onCompleteAction;
 
-        public string name;
+        [SerializeField]
+        private string name;
+
         [SerializeField]
         private AudioClip clip;
         [SerializeField]
@@ -26,12 +31,20 @@ namespace AL.Audio
         [SerializeField]
         private bool isNarration = false;
 
+        private bool initialized = false;
+
         private AudioSource audioSource;
         private IEnumerator fadeCoroutine;
 
         public bool IsNarration { get { return isNarration; } }
 
+        public bool IsInitialized { get { return initialized; } }
+
+        public string Name { get { return name; } }
+
         public bool IsPlaying { get { return audioSource ? audioSource.isPlaying : false; } }
+
+        public float RemainingLength { get { return audioSource.clip.length - audioSource.time; } }
 
         public AudioSource Source { get { return audioSource; } }
 
@@ -69,6 +82,7 @@ namespace AL.Audio
 
         public void Init(AudioSource _audioSource)
         {
+            initialized = true;
             audioSource = _audioSource;
             audioSource.playOnAwake = false;
             audioSource.clip = clip;
@@ -97,18 +111,25 @@ namespace AL.Audio
                 audioSource.volume = currentVolume;
                 yield return new WaitForEndOfFrame();
             }
-
-            if (play)
-                audioSource.Play();
-            else
+           
+            if(!play)
             {
                 audioSource.Pause();
                 audioSource.volume = initialVolume;
             }
         }
+
+        public void Reset()
+        {
+            if (fadeCoroutine != null)
+            {
+                Coordinator.instance.audioManager.StopCoroutine(fadeCoroutine);
+                fadeCoroutine = null;
+            }
+        }
     }
 
-    public class AudioManager : MonoBehaviour
+    public class AudioManager : MonoBehaviour, IResettable
     {
         public const string homeBackgroundMusic = "home_background_music";
         public const string buttonClick = "button_click";
@@ -118,7 +139,11 @@ namespace AL.Audio
         public Sound[] sounds;
 
         private AudioSource narrationSource;
-        private Sound currentNarration;
+        private Sound currentNarration = null;
+        private List<Sound> narrationQueue = new List<Sound>();
+        private IEnumerator narrationQueueProcessor = null;
+
+        private bool narrationPaused = true;
 
         private void Awake()
         {
@@ -138,55 +163,172 @@ namespace AL.Audio
 
         public Sound Play(string name)
         {
-            //if (VRSetup.CurrentPlatform == Enums.ViewPlatform.Desktop)
-            //    return;
 
-            Sound s = Array.Find(sounds, sound => sound.name == name);
+            Sound s = Array.Find(sounds, sound => sound.Name == name);
 
             if (s == null)
             {
                 Debug.LogError("sound: " + name + " not found");
                 return null;
             }
-
+           
             s.Play();
-            if (s.IsNarration)
-                currentNarration = s;
+            return s;
+        }
+
+        /// <summary>
+        /// Onlyl for narration
+        /// </summary>
+        /// <param name="narrationName"></param>
+        /// <returns></returns>
+        public Sound Queue(string narrationName)
+        {
+            narrationPaused = false;
+            //print("Queue: " + narrationName);
+            Sound s = Array.Find(sounds, sound => sound.Name == narrationName);
+
+            if (s == null)
+            {
+                Debug.LogError("sound: " + narrationName + " not found");
+                return null;
+            }
+
+            narrationQueue.Add(s);
+            //print("Adding: " + s.name + " to narration queue");
+
+            if (narrationQueueProcessor == null)
+            {
+                narrationQueueProcessor = ProcessAudioQueue();
+                StartCoroutine(narrationQueueProcessor);
+            }
 
             return s;
         }
 
-        public void Resume(string name)
+        public Sound Interrupt(string narrationName)
         {
-            Sound s = Array.Find(sounds, sound => sound.name == name);
+            Sound s = Array.Find(sounds, sound => sound.Name == narrationName);
+
             if (s == null)
             {
-                Debug.LogError("sound: " + name + " not fouond");
+                Debug.LogError("sound: " + narrationName + " not found");
+                return null;
+            }
+            
+            ResetNarrationProcessor();
+
+            print("interrupted by: " + narrationName);
+
+            s.Play();
+
+            return s;
+        }
+
+        private void ResetNarrationProcessor()
+        {
+            if (narrationQueueProcessor != null)
+            {
+                StopCoroutine(narrationQueueProcessor);
+                narrationQueueProcessor = null;
+                narrationPaused = false;
+            }
+        }
+
+        private IEnumerator ProcessAudioQueue()
+        {
+            do
+            {
+                if (!narrationPaused)
+                {
+                    currentNarration = narrationQueue[0];
+                    Play(currentNarration.Name);
+                    print("ProcessAudioQueue: " + currentNarration.Name);
+                }
+                else
+                {
+                    print("ProcessAudioQueue: " + currentNarration.Name);
+                    Resume(currentNarration.Name);
+                }
+
+                //yield return new WaitForSeconds(Coordinator.instance.settings.SelectedPreferences.narrationMinimumGap);
+
+                print("Removing: " + currentNarration.Name + " from queue");
+                narrationQueue.Remove(currentNarration);
+
+                yield return new WaitForSeconds(currentNarration.RemainingLength);
+               
+            }
+            while (narrationQueue.Count > 0);
+            narrationQueueProcessor = null;
+            currentNarration = null;
+        }
+
+        public void Pause(float narrationFadeDuration)
+        {
+            narrationPaused = true;
+
+            if (narrationQueueProcessor != null)
+            {
+                StopCoroutine(narrationQueueProcessor);
+                narrationQueueProcessor = null;
+            }
+
+            if (currentNarration != null &  currentNarration.IsInitialized)
+            {
+                print(currentNarration.Name);
+                currentNarration.FadeAudioToggle(false, narrationFadeDuration);
+            }
+        }
+
+        public void Resume(float narrationResumeDuration)
+        {
+            if (currentNarration != null && currentNarration.IsInitialized)
+            {
+                print("Resume");
+                narrationQueueProcessor = ProcessAudioQueue();
+                StartCoroutine(narrationQueueProcessor);
+                currentNarration.FadeAudioToggle(true, narrationResumeDuration);
+            }
+
+            narrationPaused = false;
+        }
+
+        public void Resume(string name)
+        {
+            Sound s = Array.Find(sounds, sound => sound.Name == name);
+            if (s == null)
+            {
+                Debug.LogError("sound: " + name + " not found");
                 return;
             }
-            s.Play();
+            s.Resume();
         }
 
         public void Resume(string name, float resumeDuration)
         {
-            Sound s = Array.Find(sounds, sound => sound.name == name);
+            Sound s = Array.Find(sounds, sound => sound.Name == name);
             if (s == null)
             {
                 Debug.LogError("sound: " + name + " not fouond");
                 return;
             }
+
+            s.Play();
             s.FadeAudioToggle(true, resumeDuration);
         }
 
+
         public void FadePause(string name, float duration)
         {
-            Sound s = Array.Find(sounds, sound => sound.name == name);
+            Sound s = Array.Find(sounds, sound => sound.Name == name);
             if (s == null)
             {
                 Debug.LogError("sound: " + name + " not fouond");
                 return;
             }
-            s.FadeAudioToggle(false, duration);
+          
+            if (s.IsPlaying)
+                s.FadeAudioToggle(false, duration);
         }
 
         public void FadePause(Sound s, float duration)
@@ -196,19 +338,9 @@ namespace AL.Audio
                 Debug.LogError("sound: " + name + " not fouond");
                 return;
             }
-            s.FadeAudioToggle(false, duration);
-        }
 
-        public void FadePause(float narrationFadeDuration)
-        {
-            if (currentNarration != null)
-                currentNarration.FadeAudioToggle(false, narrationFadeDuration);
-        }
-
-        public void Resume(float narrationResumeDuration)
-        {
-            if (currentNarration != null)
-                currentNarration.FadeAudioToggle(true, narrationResumeDuration);
+            if (s.IsPlaying)
+                s.FadeAudioToggle(false, duration);
         }
 
         public void Pause(string name)
@@ -216,7 +348,7 @@ namespace AL.Audio
             //if (VRSetup.CurrentPlatform == Enums.ViewPlatform.Desktop)
             //    return;
 
-            Sound s = Array.Find(sounds, sound => sound.name == name);
+            Sound s = Array.Find(sounds, sound => sound.Name == name);
             if (s == null)
             {
                 Debug.LogError("sound: " + name + " not fouond");
@@ -227,10 +359,26 @@ namespace AL.Audio
 
         public AudioClip HookedUpClip(string name)
         {
-            Sound s = Array.Find(sounds, sound => sound.name == name);
+            Sound s = Array.Find(sounds, sound => sound.Name == name);
             if (s == null)
                 return null;
             return s.Clip;
+        }
+
+        public void Reset()
+        {
+            foreach (var item in sounds)
+            {
+                item.Reset();
+            }
+            if (narrationQueueProcessor != null)
+            {
+                StopCoroutine(narrationQueueProcessor);
+                narrationQueueProcessor = null;
+            }
+            narrationPaused = false;
+            narrationQueue.Clear();
+            currentNarration = null;
         }
     }
 }

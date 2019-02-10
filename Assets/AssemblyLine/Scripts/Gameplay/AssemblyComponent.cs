@@ -4,36 +4,60 @@ using UnityEngine;
 
 namespace AL.Gameplay
 {
-    public class AssemblyComponent : MonoBehaviour, IHighlightable
+    public class AssemblyComponent : MonoBehaviour, IResettable, IAssemblyItem
     {
         [SerializeField]
         private MeshRenderer meshRenderer;
         private bool trackHover = true;
 
         private bool highlighted = false;
+        private StepType stepType = StepType.PART_PLACEMENT;
 
-        public void OnTriggerEnter(Collider other)
+        private IEnumerator assemblyCompleteEnumerator;
+
+        private IEnumerator AssemblyCompleteEnumerator(float tweenLength)
         {
-           
+            yield return new WaitForSeconds(tweenLength);
+
+            AssemblyComplete();
         }
 
-        public void OnTriggerExit(Collider other)
-        {
-            //print("OnTriggerEnter: " + name);
-        }
-
-        public void WatchForAssembly()
-        {
-            meshRenderer.enabled = true;
-            Highlight(HighlightType.TRANSPARENT);
-        }
-
-        public void AssemblyComplete()
+        private void AssemblyComplete()
         {
             trackHover = false;
-            Highlight(HighlightType.NONE);
+            if (stepType == StepType.PART_PLACEMENT)
+            {
+                Highlight(HighlightType.NONE);
+                meshRenderer.enabled = true;
+            }
         }
 
+        public void WatchForAssembly(StepType type)
+        {
+            stepType = type;
+            if (type == StepType.PART_PLACEMENT)
+            {
+                meshRenderer.enabled = true;
+                Highlight(HighlightType.TRANSPARENT);
+            }
+        }
+
+        public void AssemblyComplete(float tweenLength)
+        {
+            if (assemblyCompleteEnumerator != null)
+                StopCoroutine(assemblyCompleteEnumerator);
+            if (stepType == StepType.PART_PLACEMENT)
+                meshRenderer.enabled = false;
+            assemblyCompleteEnumerator = AssemblyCompleteEnumerator(tweenLength);
+            StartCoroutine(assemblyCompleteEnumerator);
+        }
+
+        public void Reset()
+        {
+            meshRenderer.enabled = false;
+            trackHover = true;
+            Highlight(HighlightType.NONE);
+        }
 
         public void Highlight(HighlightType type)
         {

@@ -14,3 +14,11 @@ MonoBehaviour:
   mainMenuKey:
     button: 256
     controller: 1
+  gameplayStartKey:
+    button: 1
+    controller: 2
+  buttonClickAnimationSpeed: 0.1
+  buttonClickAnimationImpact: 0.1
+  environmentSwitchDuration: 0.2
+  assemblyTweenLength: 0.4
+  narrationMinimumGap: 0.8

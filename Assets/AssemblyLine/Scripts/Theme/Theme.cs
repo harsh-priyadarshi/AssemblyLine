@@ -23,6 +23,9 @@ namespace AL.Theme
         public Color InputFieldSelection = new Color32(5, 5, 10, 255);
         public Color InputFieldNormalColor = new Color32(12, 12, 18, 255);
         public Color PanelColor = new Color32(20, 20, 26, 255);
+        public Color ErrorPanelColor = new Color32(20, 20, 26, 255);
+        public Color WarningPanelColor = new Color32(20, 20, 26, 255);
+        public Color ResultPanelColor = new Color32(20, 20, 26, 255);
         #endregion
 
         #region ObjectControl
