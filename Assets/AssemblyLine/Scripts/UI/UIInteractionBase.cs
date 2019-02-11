@@ -31,6 +31,8 @@ namespace AL.UI
         {
             ToggleOutlineHighlight(false);
             ToggleBackgroundHighlight(false);
+            if (gameObject.Equals( EventSystem.current.currentSelectedGameObject) )
+                EventSystem.current.SetSelectedGameObject(null);
         }
 
         public virtual void Init()

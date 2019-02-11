@@ -18,7 +18,7 @@ namespace AL.UI.VR
         }
     }
 
-    public class VRButtonInteraction : VRUIInteractionBase
+    public class VRButtonInteraction : VRUIInteractionBase, IPointerClickHandler
     {
         [SerializeField]
         TextMeshProUGUI buttonText;

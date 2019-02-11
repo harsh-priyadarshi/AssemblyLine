@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using DG.Tweening;
 
 namespace AL.UI
 {
@@ -16,13 +17,19 @@ namespace AL.UI
     public class ModalWindow : MonoBehaviour, IResettable
     {
         [SerializeField]
-        Image image;
+        Image headerImage;
 
         [SerializeField]
         private List<Image> buttonImages;
 
         [SerializeField]
         private TextMeshProUGUI textContent;
+
+        [SerializeField]
+        private RectTransform tweenHeaderOpenAnchor, tweenHeaaderCloseAnchor;
+
+        [SerializeField]
+        private GameObject mainPanel;
 
         [SerializeField]
         private Transform anchor;
@@ -75,40 +82,51 @@ namespace AL.UI
             }
         }
 
+        private void Open()
+        {
+            gameObject.SetActive(true);
+            headerImage.rectTransform.DOSizeDelta(tweenHeaderOpenAnchor.sizeDelta, Coordinator.instance.settings.SelectedPreferences.assemblyTweenLength).OnComplete(() => mainPanel.SetActive(true));
+        }
+
         public void Show(WindowType windowType, string content)
         {
             windowOn = true;
             switch (windowType)
             {
                 case WindowType.ERROR:
-                    image.color = Coordinator.instance.appTheme.SelectedTheme.ErrorPanelColor;
+                    headerImage.color = Coordinator.instance.appTheme.SelectedTheme.ErrorPanelColor;
                     break;
                 case WindowType.WARNING:
-                    image.color = Coordinator.instance.appTheme.SelectedTheme.WarningPanelColor;
+                    headerImage.color = Coordinator.instance.appTheme.SelectedTheme.WarningPanelColor;
                     break;
                 case WindowType.RESULT:
-                    image.color = Coordinator.instance.appTheme.SelectedTheme.ResultPanelColor;
+                    headerImage.color = Coordinator.instance.appTheme.SelectedTheme.ResultPanelColor;
                     break;
                 default:
-                    image.color = Coordinator.instance.appTheme.SelectedTheme.ResultPanelColor;
+                    headerImage.color = Coordinator.instance.appTheme.SelectedTheme.ResultPanelColor;
                     break;
             }
 
             foreach (var item in buttonImages)
-                item.color = image.color;
+                item.color = headerImage.color;
 
-            gameObject.SetActive(true);
             transform.SetParent(Coordinator.instance.ovrPlayerController.transform.parent);
             textContent.text = content;
+
+            Open();
         }
 
         public void Close()
         {
             windowOn = false;
-            gameObject.SetActive(false);
             transform.SetParent(anchor);
             transform.localPosition = Vector3.zero;
             transform.localRotation = Quaternion.identity;
+
+            mainPanel.SetActive(false);
+            headerImage.gameObject.SetActive(true);
+            headerImage.rectTransform.DOSizeDelta(tweenHeaaderCloseAnchor.sizeDelta, Coordinator.instance.settings.SelectedPreferences.assemblyTweenLength).OnComplete(() => gameObject.SetActive(false));
+
             Reset();
         }
         

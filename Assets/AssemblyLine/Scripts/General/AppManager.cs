@@ -163,18 +163,18 @@ namespace AL
                 gameplayStarted = true;
             }
 
-            //if (OVRInput.GetDown(OVRInput.Button.PrimaryHandTrigger, OVRInput.Controller.RTouch))
-            //{
-            //    if (Coordinator.instance.modalWindow.gameObject.activeSelf)
-            //    {
-            //        Coordinator.instance.modalWindow.Close();
-            //    }
-            //    else
-            //    {
-            //        Coordinator.instance.modalWindow.Show(UI.WindowType.ERROR, "Hi, this is dummy result");
+            if (OVRInput.GetDown(OVRInput.Button.PrimaryHandTrigger, OVRInput.Controller.RTouch))
+            {
+                if (Coordinator.instance.modalWindow.gameObject.activeSelf)
+                {
+                    Coordinator.instance.modalWindow.Close();
+                }
+                else
+                {
+                    Coordinator.instance.modalWindow.Show(UI.WindowType.ERROR, "Hi, this is dummy result");
 
-            //    }
-            //}
+                }
+            }
 
         }
 
@@ -186,6 +186,7 @@ namespace AL
             gameplayPlayerPosition = homePlayerPosition;
             assemblyObjects.SetActive(false);
             Coordinator.instance.audioManager.Reset();
+            Coordinator.instance.modalWindow.Reset();
             ComponentReset();
         }
 
@@ -330,7 +331,6 @@ namespace AL
         private IEnumerator ToggleHomeCoroutine(UnityAction onCompleteAction)
         {
 ;           atHome = !atHome;
-            print("ToggleHomeCoroutine: " + atHome);
             ovrScreenFade.FadeOut();
 
             yield return new WaitForSeconds(ovrScreenFade.fadeTime);
