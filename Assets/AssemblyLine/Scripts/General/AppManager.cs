@@ -6,6 +6,7 @@ using AL.Gameplay;
 using System;
 using UnityEngine.Events;
 using System.Linq;
+using DG.Tweening;
 
 namespace AL
 {
@@ -100,6 +101,7 @@ namespace AL
         public const string correctTextColorStyle = "Correct";
         public const string errorTextColorStyle = "Error";
         public const string normalShaderPath = "Standard";
+        public const string assemblyInitiationTriggerString = "InitiateAssembly";
 
 
         [Header("Gameplay")]
@@ -120,13 +122,25 @@ namespace AL
         [SerializeField]
         private OVRScreenFade ovrScreenFade;
         [SerializeField]
-        private GameObject trainingEnvironment, assessmentEnvironment, assemblyObjects;
+        private GameObject trainingEnvironment, assessmentEnvironment, assemblyObjects, dynamicAssemblyObjects, BIW, doorHanger;
         [SerializeField]
         NarrationSet narrationSet;
         [SerializeField]
         List<AssemblyComponent> assemblyComponents;
         [SerializeField]
         List<RawComponent> rawComponents;
+        [SerializeField]
+        List<DynamicObject> resetttableTransorms;
+
+        [Header("Anchors")]
+        [SerializeField]
+        private Transform BIWAnchor1;
+      
+        [SerializeField]
+        private Transform hangerAnchor1;
+        [SerializeField]
+        private Transform hangerAnchor2;
+     
 
         private GameObject gameplayEnvironment;
         private GameObject gameplayHomeMenu;
@@ -135,6 +149,7 @@ namespace AL
         private CustomTransform homePlayerPosition, gameplayPlayerPosition;
         private IEnumerator toggleHomeCoroutine = null;
         private bool introDone = false;
+        private Tweener assemblyInitiator;
 
         #region RESETTABLE_VARIABLES
         private bool gameplayStarted = false;
@@ -158,36 +173,39 @@ namespace AL
 
             if (Coordinator.instance.settings.SelectedPreferences.gameplayStartKey.GetDown() && currentState != State.NONE && !gameplayStarted && !atHome)
             {
-                assemblyObjects.SetActive(true);
-                InitiateNextStep();
-                gameplayStarted = true;
+                InitiateAssembly();
             }
 
-            if (OVRInput.GetDown(OVRInput.Button.PrimaryHandTrigger, OVRInput.Controller.RTouch))
-            {
-                if (Coordinator.instance.modalWindow.gameObject.activeSelf)
-                {
-                    Coordinator.instance.modalWindow.Close();
-                }
-                else
-                {
-                    Coordinator.instance.modalWindow.Show(UI.WindowType.ERROR, "Hi, this is dummy result");
+            //if (OVRInput.GetDown(OVRInput.Button.PrimaryHandTrigger, OVRInput.Controller.RTouch))
+            //{
+            //    if (Coordinator.instance.modalWindow.gameObject.activeSelf)
+            //    {
+            //        Coordinator.instance.modalWindow.Close();
+            //    }
+            //    else
+            //    {
+            //        Coordinator.instance.modalWindow.Show(UI.WindowType.ERROR, "Hi, this is dummy result");
 
-                }
-            }
+            //    }
+            //}
 
         }
 
-        private void Reset()
+        private void OnReset()
         {
+            BIW.SetActive(false);
+            doorHanger.SetActive(false);
+            dynamicAssemblyObjects.SetActive(false);
             gameplayStarted = false;
             currentStepIndex = 0;
             homePlayerPosition.Apply(Coordinator.instance.ovrPlayerController.transform);
             gameplayPlayerPosition = homePlayerPosition;
             assemblyObjects.SetActive(false);
-            Coordinator.instance.audioManager.Reset();
-            Coordinator.instance.modalWindow.Reset();
+            Coordinator.instance.audioManager.OnReset();
+            Coordinator.instance.modalWindow.OnReset();
             ComponentReset();
+            foreach (var item in resetttableTransorms)
+                item.OnReset();
         }
 
         public void ApplyShader(bool CiconiaHighlight, string shaderPath, GameObject obj, Color color)
@@ -274,7 +292,7 @@ namespace AL
         public  void GameplayQuit()
         {
             //print("GameplayQuit");
-            Reset();
+            OnReset();
 
             currentState = State.NONE;
             gameplayHomeMenu.SetActive(false);
@@ -283,22 +301,23 @@ namespace AL
 
         public void TrainingReset()
         {
-            Reset();
+            OnReset();
             ToggleHome(null);
         }
         
         public void AssessmentReset()
         {
-            Reset();
+            OnReset();
             ToggleHome(null);
         }
 
         public void ComponentReset()
         {
             foreach (var item in assemblyComponents)
-                item.Reset();
+                item.OnReset();
             foreach (var item in rawComponents)
-                item.Reset();
+                item.OnReset();
+          
         }
 
         public void OnLoginToggle(bool val)
@@ -314,7 +333,7 @@ namespace AL
         #region GAMEPLAY
         private void InitiateNextStep()
         {
-            //print("InitiateNextStep");
+            print("InitiateNextStep");
             if (assemblySteps.Count > currentStepIndex)
                 assemblySteps[currentStepIndex].InitiateStep();
         }
@@ -326,6 +345,32 @@ namespace AL
                 Coordinator.instance.audioManager.Queue(currentState == State.TRAINING ? "training_intro" : "assessment_intro");
                 introDone = true;
             }
+        }
+
+        private void InitiateAssembly()
+        {
+            dynamicAssemblyObjects.SetActive(true);
+
+            BIW.SetActive(true);
+            assemblyInitiator = BIW.transform.DOMove(BIWAnchor1.position, 20f).OnComplete(
+                () =>
+                {
+                    doorHanger.SetActive(true);
+                    assemblyInitiator = doorHanger.transform.DOMove(hangerAnchor1.position, 6).OnComplete(
+                    () =>
+                    {
+                        assemblyInitiator = doorHanger.transform.DOMove(hangerAnchor2.position, 3).OnComplete(() =>
+                        {
+                            assemblyInitiator = null;
+                            InitiateNextStep();
+                        }
+                        );
+                    }
+                    );
+                }
+                );
+
+            Coordinator.instance.audioManager.Play(AudioManager.machineAudio);
         }
 
         private IEnumerator ToggleHomeCoroutine(UnityAction onCompleteAction)
@@ -356,6 +401,8 @@ namespace AL
             RenderSettings.skybox = atHome ? homeSkybox : gameplaySkybox;
             homeCanvas.SetActive(atHome);
             Coordinator.instance.modalWindow.OnHomeToggle();
+            if (assemblyInitiator != null)
+                assemblyInitiator.TogglePause();
 
             if (atHome)
                 Coordinator.instance.audioManager.Resume(AudioManager.homeBackgroundMusic, ovrScreenFade.fadeTime);
@@ -366,11 +413,7 @@ namespace AL
             }
             gameplayHomeMenu.SetActive(atHome);
             gameplayEnvironment.SetActive(!atHome);
-
-            if (atHome)
-                assemblyObjects.SetActive(false);
-            else if (gameplayStarted)
-                assemblyObjects.SetActive(true);
+            assemblyObjects.SetActive(!atHome);
 
             Coordinator.instance.ovrPlayerController.SetHaltUpdateMovement(atHome);
             ovrScreenFade.FadeIn();

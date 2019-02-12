@@ -1,27 +1,36 @@
 fileFormatVersion: 2
-guid: a35d9a860b7f9dc4d9e7c8e4a0c42b6d
+guid: bbefbc35ee1679c48ab747ab9aef7f15
 ModelImporter:
   serializedVersion: 23
   fileIDToRecycleName:
-    100000: //RootNode
-    400000: //RootNode
-    2100000: yellow_main
-    2100002: phongE2
-    2100004: Color401724
-    2100006: chrome1
-    2100008: power_but
-    2100010: but_yellow
-    2100012: Color36139
-    2100014: but_red
-    2100016: but_green
-    2100018: blue_suck
-    2100020: joints_phong1
-    2100022: wires
-    2100024: joints_phongE2
-    2100026: INSTA_MAT_1
-    2300000: //RootNode
-    3300000: //RootNode
-    4300000: door_assembly_machine2
+    100000: ASM0001_ASM
+    100002: //RootNode
+    100004: Brep_1
+    100006: Brep_1_1
+    100008: Brep_1_2
+    100010: PRT0001__PRT0001_
+    100012: PRT0002__PRT0002_
+    100014: PRT0003__PRT0003_
+    400000: ASM0001_ASM
+    400002: //RootNode
+    400004: Brep_1
+    400006: Brep_1_1
+    400008: Brep_1_2
+    400010: PRT0001__PRT0001_
+    400012: PRT0002__PRT0002_
+    400014: PRT0003__PRT0003_
+    2100000: Cutlery_2
+    2100002: Cutlery
+    2100004: Cutlery_1
+    2300000: Brep_1
+    2300002: Brep_1_1
+    2300004: Brep_1_2
+    3300000: Brep_1
+    3300002: Brep_1_1
+    3300004: Brep_1_2
+    4300000: Brep_1
+    4300002: Brep_1_1
+    4300004: Brep_1_2
   externalObjects: {}
   materials:
     importMaterials: 1
@@ -53,7 +62,7 @@ ModelImporter:
     isReadable: 1
   meshes:
     lODScreenPercentages: []
-    globalScale: 0.2
+    globalScale: 1
     meshCompression: 0
     addColliders: 0
     importVisibility: 1

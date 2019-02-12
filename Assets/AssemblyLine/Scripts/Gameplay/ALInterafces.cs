@@ -14,7 +14,7 @@ namespace AL
 
     public interface IResettable
     {
-        void Reset();
+        void OnReset();
     }
 
     public interface IAssemblyItem

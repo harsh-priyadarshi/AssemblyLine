@@ -27,14 +27,39 @@ namespace AL.Audio
         private float pitch;
         [SerializeField]
         private bool loop = false;
+        [SerializeField]
+        private GameObject audioSourceObject;
+        [SerializeField]
+        [Range(0.0f, 1.0f)]
+        private float spatialBlend = 0;
 
         [SerializeField]
         private bool isNarration = false;
 
         private bool initialized = false;
+        private bool cancelOnCompleteActionOnInterruption = true;
 
         private AudioSource audioSource;
         private IEnumerator fadeCoroutine;
+        private IEnumerator onCompleteActionEnumerator;
+
+        private void ResetOnCompleteAction()
+        {
+            if (onCompleteActionEnumerator != null)
+            {
+                Coordinator.instance.StopCoroutine(onCompleteActionEnumerator);
+                onCompleteActionEnumerator = null;
+                onCompleteAction = null;
+            }
+        }
+
+        private IEnumerator OnCompleteAction()
+        {
+            yield return new WaitForSeconds(RemainingLength);
+
+            if (onCompleteAction != null)
+                onCompleteAction.Invoke();
+        }
 
         public bool IsNarration { get { return isNarration; } }
 
@@ -46,38 +71,60 @@ namespace AL.Audio
 
         public float RemainingLength { get { return audioSource.clip.length - audioSource.time; } }
 
+        public GameObject AUdioSourceObject { get { return audioSourceObject; } }
+
+
         public AudioSource Source { get { return audioSource; } }
 
         public AudioClip Clip { get { return clip; } }
 
-        public void SetOnCompleteAction(UnityAction _action)
+        public void SetOnCompleteAction(UnityAction _action, bool cancelOnInterruption)
         {
             onCompleteAction = _action;
+            if (onCompleteAction != null)
+            {
+                onCompleteActionEnumerator = OnCompleteAction();
+                Coordinator.instance.StartCoroutine(onCompleteActionEnumerator);
+            }
         }
 
         public void Play()
         {
             if (audioSource.isPlaying)
+            {
                 audioSource.Stop();
+                if (cancelOnCompleteActionOnInterruption)
+                    ResetOnCompleteAction();
+            }
             if (IsNarration)
                 audioSource.clip = clip;
 
-            audioSource.Play();
+            Resume();
         }
 
         public void Resume()
         {
             audioSource.Play();
+            if (onCompleteAction != null)
+            {
+                onCompleteActionEnumerator = OnCompleteAction();
+                Coordinator.instance.StartCoroutine(onCompleteActionEnumerator);
+            }
+
         }
 
         public void Stop()
         {
             audioSource.Stop();
+            if (cancelOnCompleteActionOnInterruption)
+                ResetOnCompleteAction();
         }
 
         public void Pause()
         {
             audioSource.Pause();
+            if (onCompleteActionEnumerator != null)
+                Coordinator.instance.StopCoroutine(onCompleteActionEnumerator);
         }
 
         public void Init(AudioSource _audioSource)
@@ -89,6 +136,7 @@ namespace AL.Audio
             audioSource.volume = volume;
             audioSource.pitch = pitch;
             audioSource.loop = loop;
+            audioSource.spatialBlend = spatialBlend;
         }
 
         public void FadeAudioToggle(bool play, float fadeDuration)
@@ -114,12 +162,12 @@ namespace AL.Audio
            
             if(!play)
             {
-                audioSource.Pause();
+                Pause();
                 audioSource.volume = initialVolume;
             }
         }
 
-        public void Reset()
+        public void OnReset()
         {
             if (fadeCoroutine != null)
             {
@@ -135,6 +183,7 @@ namespace AL.Audio
         public const string buttonClick = "button_click";
         public const string trainingBackgroundMusic = "training_background_music";
         public const string assessmentBackgroundMusic = "assessment_background_music";
+        public const string machineAudio = "machine_audio";
 
         public Sound[] sounds;
 
@@ -157,7 +206,12 @@ namespace AL.Audio
                 else if (item.IsNarration)
                     item.Init(narrationSource);
                 else
-                    item.Init(gameObject.AddComponent<AudioSource>());
+                {
+                    if (item.AUdioSourceObject != null)
+                        item.Init(gameObject.AddComponent<AudioSource>());
+                    else
+                        item.Init(gameObject.AddComponent<AudioSource>());
+                }
             }
         }
 
@@ -368,11 +422,11 @@ namespace AL.Audio
             return s.Clip;
         }
 
-        public void Reset()
+        public void OnReset()
         {
             foreach (var item in sounds)
             {
-                item.Reset();
+                item.OnReset();
             }
             if (narrationQueueProcessor != null)
             {

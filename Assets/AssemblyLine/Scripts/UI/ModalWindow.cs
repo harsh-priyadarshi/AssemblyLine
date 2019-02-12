@@ -127,10 +127,10 @@ namespace AL.UI
             headerImage.gameObject.SetActive(true);
             headerImage.rectTransform.DOSizeDelta(tweenHeaaderCloseAnchor.sizeDelta, Coordinator.instance.settings.SelectedPreferences.assemblyTweenLength).OnComplete(() => gameObject.SetActive(false));
 
-            Reset();
+            OnReset();
         }
         
-        public void Reset()
+        public void OnReset()
         {
             textContent.text = "";
             if (leftHandHovering)

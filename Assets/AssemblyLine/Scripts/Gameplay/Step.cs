@@ -112,7 +112,7 @@ namespace AL.Gameplay
             return false;
         }
 
-        public void Reset()
+        public void OnReset()
         {
             wrongAttemptCount = 0;
             status = StepStatus.NOT_STARTED;

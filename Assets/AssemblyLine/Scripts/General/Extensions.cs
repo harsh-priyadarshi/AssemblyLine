@@ -35,9 +35,8 @@ namespace AL
 
         #endregion
 
-        public static Sound OnComplete(this Sound sound, UnityAction action)
-        {
-            sound.SetOnCompleteAction(action);
+        public static Sound OnComplete(this Sound sound, UnityAction action, bool cancelOnAudioInterruption = true){
+            sound.SetOnCompleteAction(action, cancelOnAudioInterruption);
             return sound;
         }
 

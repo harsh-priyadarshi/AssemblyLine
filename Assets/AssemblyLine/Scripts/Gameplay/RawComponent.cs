@@ -95,7 +95,7 @@ namespace AL.Gameplay
             }
         }
 
-        public void Reset()
+        public void OnReset()
         {
             hovereObject = null;
             Highlight(HighlightType.NONE);

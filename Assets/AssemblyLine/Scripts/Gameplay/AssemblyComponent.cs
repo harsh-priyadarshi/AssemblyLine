@@ -52,7 +52,7 @@ namespace AL.Gameplay
             StartCoroutine(assemblyCompleteEnumerator);
         }
 
-        public void Reset()
+        public void OnReset()
         {
             meshRenderer.enabled = false;
             trackHover = true;

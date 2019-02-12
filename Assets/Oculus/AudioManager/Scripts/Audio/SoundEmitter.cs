@@ -415,7 +415,7 @@ public class SoundEmitter : MonoBehaviour {
 			audioSource.volume = Mathf.Lerp( start, end, t );
 			yield return 0;
 			if ( restartPlay && ( Time.time > 0.0f ) ) {
-				audioSource.Play();	
+				audioSource.Play();
 				restartPlay = false;
 			}
 			if ( !audioSource.isPlaying ) {
