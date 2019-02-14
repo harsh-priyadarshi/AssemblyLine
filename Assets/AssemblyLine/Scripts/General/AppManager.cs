@@ -350,13 +350,13 @@ namespace AL
         private void InitiateAssembly()
         {
             dynamicAssemblyObjects.SetActive(true);
-
+            gameplayStarted = true;
             BIW.SetActive(true);
-            assemblyInitiator = BIW.transform.DOMove(BIWAnchor1.position, 20f).OnComplete(
+            assemblyInitiator = BIW.transform.DOMove(BIWAnchor1.position, 11f).OnComplete(
                 () =>
                 {
                     doorHanger.SetActive(true);
-                    assemblyInitiator = doorHanger.transform.DOMove(hangerAnchor1.position, 6).OnComplete(
+                    assemblyInitiator = doorHanger.transform.DOMove(hangerAnchor1.position, 5).OnComplete(
                     () =>
                     {
                         assemblyInitiator = doorHanger.transform.DOMove(hangerAnchor2.position, 3).OnComplete(() =>
@@ -499,6 +499,8 @@ namespace AL
                     currentStepIndex++;
                     if (currentStepIndex == assemblySteps.Count)
                         Finish();
+                    else
+                        InitiateNextStep();
                 }
             }
         }

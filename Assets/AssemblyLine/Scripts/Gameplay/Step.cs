@@ -57,7 +57,13 @@ namespace AL.Gameplay
 
         private void InstructForStep()
         {
+            Debug.Log("InstructForStep: " + name);
             correctAssemblyItemSample = correctPickSample.GetComponent<IAssemblyItem>();
+            if (type == StepType.PART_PLACEMENT)
+            {
+                ((RawComponent)correctAssemblyItemSample).OnReset();
+                ((RawComponent)correctAssemblyItemSample).gameObject.SetActive(true);
+            }
             correctPart.WatchForAssembly(type);
             correctAssemblyItemSample.Highlight(HighlightType.BLILNK);
             if (!string.IsNullOrEmpty(narration))
@@ -66,6 +72,7 @@ namespace AL.Gameplay
 
         public void InitiateStep()
         {
+            Debug.Log("InitiateStep: "+ name);
             status = StepStatus.ONGOING;
             InstructForStep();
             startTime = Time.time;
@@ -114,6 +121,7 @@ namespace AL.Gameplay
 
         public void OnReset()
         {
+            Debug.Log("OnReset: " + name);
             wrongAttemptCount = 0;
             status = StepStatus.NOT_STARTED;
             pickedUpObject = null;

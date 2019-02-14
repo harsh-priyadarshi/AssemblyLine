@@ -52,6 +52,7 @@ namespace AL.Gameplay
 
         public void OnTriggerEnter(Collider other)
         {
+            //print("OnTriggerEnter: " + other.name);
             hovereObject = other.gameObject;
             if (hovereObject.layer == 13)
                 Highlight(hovereObject.tag.Equals(gameObject.tag) ? HighlightType.GREEN : HighlightType.RED);

@@ -8,17 +8,24 @@ namespace AL.Gameplay
     {
         [SerializeField]
         private MeshRenderer meshRenderer;
-        private bool trackHover = true;
+        [SerializeField]
+        [Range(1, 10)]
+        private float onHighlightScaleFactor;
 
+        private bool trackHover = true;
         private bool highlighted = false;
         private StepType stepType = StepType.PART_PLACEMENT;
-
         private IEnumerator assemblyCompleteEnumerator;
+        private Vector3 originalScale;
+
+        void Start()
+        {
+            originalScale = transform.localScale;
+        }
 
         private IEnumerator AssemblyCompleteEnumerator(float tweenLength)
         {
             yield return new WaitForSeconds(tweenLength);
-
             AssemblyComplete();
         }
 
@@ -34,6 +41,7 @@ namespace AL.Gameplay
 
         public void WatchForAssembly(StepType type)
         {
+            //print("WatchForAssembly: " + name);
             stepType = type;
             if (type == StepType.PART_PLACEMENT)
             {
@@ -89,6 +97,11 @@ namespace AL.Gameplay
                 default:
                     break;
             }
+
+            if (type != HighlightType.NONE)
+                transform.localScale = originalScale * onHighlightScaleFactor;
+            else
+                transform.localScale = originalScale;
         }
     }
 }
