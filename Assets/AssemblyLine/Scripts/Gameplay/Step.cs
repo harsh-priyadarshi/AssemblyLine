@@ -50,10 +50,23 @@ namespace AL.Gameplay
 
         public StepType StepType { get { return type; } }
 
+        public StepStatus Status { get { return status; } }
+
         public float TimeTaken { get { return endTime - startTime; } }
 
         public int WrongAttemptCount { get { return wrongAttemptCount; } }
 
+        public GameObject CorrectPart {
+            get { return correctPart.gameObject; }
+            set
+            {
+                correctPart = value.GetComponent<AssemblyComponent>();
+                if (status == StepStatus.ONGOING)
+                    correctPart.WatchForAssembly(type);
+                else
+                    correctPart.StopWatchingForAssembly();
+            }
+        }
 
         private void InstructForStep()
         {
@@ -69,6 +82,8 @@ namespace AL.Gameplay
             if (!string.IsNullOrEmpty(narration))
                 Coordinator.instance.audioManager.Play(narration);
         }
+
+       
 
         public void InitiateStep()
         {
@@ -105,6 +120,12 @@ namespace AL.Gameplay
             Coordinator.instance.audioManager.Interrupt(placementNarration);
         }
 
+        public bool ValidateHover(GameObject hoveredObject)
+        {
+            Debug.Log("ValidateHover: " + hoveredObject.name + " " + correctPart.gameObject.name);
+            return hoveredObject != null && hoveredObject.Equals(correctPart.gameObject);
+        }
+
         public bool ValidatePickup(GameObject obj)
         {
             if (obj.tag.Equals(correctPickSample.tag))
@@ -115,7 +136,7 @@ namespace AL.Gameplay
                 pickedupAssemblyItem = pickedUpObject.GetComponent<IAssemblyItem>();
                 return true;
             }
-            OnWrongAttempt(type == StepType.PART_PLACEMENT ? Mistake.PART : Mistake.TOOL);
+
             return false;
         }
 

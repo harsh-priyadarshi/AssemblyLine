@@ -4,11 +4,32 @@ ModelImporter:
   serializedVersion: 23
   fileIDToRecycleName:
     100000: //RootNode
+    100002: Assembly
+    100004: Conveyor
+    100006: Conveyor 1
+    100008: Default Camera 1
+    100010: Trial
+    100012: Trial 1
     400000: //RootNode
+    400002: Assembly
+    400004: Conveyor
+    400006: Conveyor 1
+    400008: Default Camera 1
+    400010: Trial
+    400012: Trial 1
+    2000000: Default Camera 1
     2100000: trail
+    2100002: Bright yellow Metallic Paint
+    2100004: Black Paint Metallic
     2300000: //RootNode
+    2300002: Conveyor 1
+    2300004: Trial 1
     3300000: //RootNode
+    3300002: Conveyor 1
+    3300004: Trial 1
     4300000: trail1
+    4300002: Conveyor
+    4300004: Trial
   externalObjects: {}
   materials:
     importMaterials: 1

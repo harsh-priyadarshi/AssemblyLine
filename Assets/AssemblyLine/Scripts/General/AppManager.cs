@@ -161,9 +161,7 @@ namespace AL
 
         private void Awake()
         {
-            Coordinator.instance.ovrPlayerController.SetHaltUpdateMovement(true);
-            homePlayerPosition.Extract(Coordinator.instance.ovrPlayerController.transform);
-            gameplayPlayerPosition.Extract(Coordinator.instance.ovrPlayerController.transform);
+            Init();
         }
 
         private void Update()
@@ -191,8 +189,28 @@ namespace AL
 
         }
 
+        private void Init()
+        {
+            Coordinator.instance.ovrPlayerController.SetHaltUpdateMovement(true);
+            homePlayerPosition.Extract(Coordinator.instance.ovrPlayerController.transform);
+            gameplayPlayerPosition.Extract(Coordinator.instance.ovrPlayerController.transform);
+
+            foreach (var item in resetttableTransorms)
+                item.Init();
+            foreach (var item in rawComponents)
+                item.Init();
+            foreach (var item in assemblyComponents)
+                item.Init();
+        }
+
         private void OnReset()
         {
+            if (assemblyInitiator != null)
+            {
+                assemblyInitiator.Kill();
+                assemblyInitiator = null;
+            }
+
             BIW.SetActive(false);
             doorHanger.SetActive(false);
             dynamicAssemblyObjects.SetActive(false);
@@ -204,6 +222,7 @@ namespace AL
             Coordinator.instance.audioManager.OnReset();
             Coordinator.instance.modalWindow.OnReset();
             ComponentReset();
+           
             foreach (var item in resetttableTransorms)
                 item.OnReset();
         }
@@ -436,6 +455,22 @@ namespace AL
             }
         }
 
+        private bool InterchangeTarget(GameObject hoveredObj)
+        {
+            var stepInvolvingHoveredObj = assemblySteps.Find(item => item.CorrectPart.Equals(hoveredObj));
+
+            if (stepInvolvingHoveredObj == null || stepInvolvingHoveredObj.Status != StepStatus.NOT_STARTED)
+            {
+                return false;
+            }
+            else
+            {
+                stepInvolvingHoveredObj.CorrectPart = assemblySteps[currentStepIndex].CorrectPart;
+                assemblySteps[currentStepIndex].CorrectPart = hoveredObj;
+                return true;
+            }
+        }
+
         public string RetrieveNarration(Mistake mistakeLevel)
         {
             switch (mistakeLevel)
@@ -456,13 +491,23 @@ namespace AL
             return narrationSet.RetrieveNarration(type);
         }
 
-        public void OnObjectGrab(GameObject obj)
+        public bool OnObjectGrab(GameObject obj)
         {
             //print("OnObjectGrab");
             if (currentStepIndex < assemblySteps.Count && assemblySteps[currentStepIndex].StepType == StepType.PART_PLACEMENT)
-            {
-                assemblySteps[currentStepIndex].ValidatePickup(obj);
-            }
+                return assemblySteps[currentStepIndex].ValidatePickup(obj);
+            else
+                return false;
+        }
+
+        public bool ValidateHover(GameObject obj, GameObject hoveredObject)
+        {
+            if (currentStepIndex < assemblySteps.Count && !obj.tag.Equals(hoveredObject.tag))
+                return false;
+            else if (currentStepIndex < assemblySteps.Count && assemblySteps[currentStepIndex].ValidateHover(hoveredObject))
+                return true;
+            else
+                return InterchangeTarget(hoveredObject);
         }
 
         public void OnToolGrab(GameObject obj)

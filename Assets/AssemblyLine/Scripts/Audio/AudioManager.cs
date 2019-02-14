@@ -97,7 +97,10 @@ namespace AL.Audio
                     ResetOnCompleteAction();
             }
             if (IsNarration)
+            {
                 audioSource.clip = clip;
+                audioSource.volume = volume;
+            }
 
             Resume();
         }
@@ -227,6 +230,10 @@ namespace AL.Audio
             }
            
             s.Play();
+
+            if (s.IsNarration)
+                currentNarration = s;
+
             return s;
         }
 

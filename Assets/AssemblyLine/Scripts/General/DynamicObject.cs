@@ -8,7 +8,7 @@ namespace AL
     {
         CustomTransform originalTransorm;
 
-        void Start()
+        public void Init()
         {
             originalTransorm = new CustomTransform();
             originalTransorm.Extract(transform);

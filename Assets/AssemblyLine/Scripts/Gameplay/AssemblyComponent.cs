@@ -12,16 +12,11 @@ namespace AL.Gameplay
         [Range(1, 10)]
         private float onHighlightScaleFactor;
 
-        private bool trackHover = true;
         private bool highlighted = false;
         private StepType stepType = StepType.PART_PLACEMENT;
         private IEnumerator assemblyCompleteEnumerator;
         private Vector3 originalScale;
-
-        void Start()
-        {
-            originalScale = transform.localScale;
-        }
+        private bool watchingForAssembly = false;
 
         private IEnumerator AssemblyCompleteEnumerator(float tweenLength)
         {
@@ -29,9 +24,13 @@ namespace AL.Gameplay
             AssemblyComplete();
         }
 
+        public void Init()
+        {
+            originalScale = transform.localScale;
+        }
+
         private void AssemblyComplete()
         {
-            trackHover = false;
             if (stepType == StepType.PART_PLACEMENT)
             {
                 Highlight(HighlightType.NONE);
@@ -39,10 +38,20 @@ namespace AL.Gameplay
             }
         }
 
+        public void StopWatchingForAssembly()
+        {
+            if (watchingForAssembly)
+            {
+                meshRenderer.enabled = false;
+                Highlight(HighlightType.NONE);
+            }
+        }
+
         public void WatchForAssembly(StepType type)
         {
             //print("WatchForAssembly: " + name);
             stepType = type;
+            watchingForAssembly = true;
             if (type == StepType.PART_PLACEMENT)
             {
                 meshRenderer.enabled = true;
@@ -58,12 +67,13 @@ namespace AL.Gameplay
                 meshRenderer.enabled = false;
             assemblyCompleteEnumerator = AssemblyCompleteEnumerator(tweenLength);
             StartCoroutine(assemblyCompleteEnumerator);
+            watchingForAssembly = false;
         }
 
         public void OnReset()
         {
             meshRenderer.enabled = false;
-            trackHover = true;
+            watchingForAssembly = false;
             Highlight(HighlightType.NONE);
         }
 

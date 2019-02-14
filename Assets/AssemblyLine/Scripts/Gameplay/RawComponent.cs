@@ -8,19 +8,14 @@ namespace AL.Gameplay
     public class RawComponent : OVRGrabbable, IResettable, IAssemblyItem
     {
         private bool highlighted = false;
-        private GameObject hovereObject;
-
+        private GameObject hoveredObject;
+        private bool pickedUpCorrectly = false;
+        private bool hoveringOverCorrectTarget = false;
         CustomTransform originalTransform;
 
         private IEnumerator onCompleteEnumerator;
 
-        protected override void Start()
-        {
-            base.Start();
-            Init();
-        }
-
-        private void Init()
+        public void Init()
         {
             originalTransform.Extract(transform);
         }
@@ -39,28 +34,33 @@ namespace AL.Gameplay
         public override void GrabBegin(OVRGrabber hand, Collider grabPoint)
         {
             base.GrabBegin(hand, grabPoint);
-            Coordinator.instance.appManager.OnObjectGrab(gameObject);
+            pickedUpCorrectly = Coordinator.instance.appManager.OnObjectGrab(gameObject);
 
         }
 
         public override void GrabEnd(Vector3 linearVelocity, Vector3 angularVelocity)
         {
             base.GrabEnd(linearVelocity, angularVelocity);
-            if (hovereObject != null && hovereObject.layer == 13)
-                Coordinator.instance.appManager.OnPlacement(hovereObject.tag.Equals(gameObject.tag));
+            if (hoveredObject != null && hoveredObject.layer == 13)
+                Coordinator.instance.appManager.OnPlacement(hoveredObject.tag.Equals(gameObject.tag));
+            pickedUpCorrectly = false;
         }
 
         public void OnTriggerEnter(Collider other)
         {
             //print("OnTriggerEnter: " + other.name);
-            hovereObject = other.gameObject;
-            if (hovereObject.layer == 13)
-                Highlight(hovereObject.tag.Equals(gameObject.tag) ? HighlightType.GREEN : HighlightType.RED);
+          
+            hoveredObject = other.gameObject;
+            if (hoveredObject.layer == 13 && pickedUpCorrectly)
+            {
+                hoveringOverCorrectTarget = Coordinator.instance.appManager.ValidateHover(gameObject, hoveredObject);
+                Highlight( hoveringOverCorrectTarget ? HighlightType.GREEN : HighlightType.RED);
+            }
         }
 
         public void OnTriggerExit(Collider other)
         {
-            hovereObject = null;
+            hoveredObject = null;
             Highlight(HighlightType.NONE);
         }
 
@@ -98,10 +98,12 @@ namespace AL.Gameplay
 
         public void OnReset()
         {
-            hovereObject = null;
+            hoveredObject = null;
             Highlight(HighlightType.NONE);
             originalTransform.Apply(transform);
             gameObject.SetActive(true);
+            pickedUpCorrectly = false;
+            hoveringOverCorrectTarget = false;
         }
 
         public void AssemblyComplete(float tweenLength)
@@ -110,8 +112,11 @@ namespace AL.Gameplay
                 StopCoroutine(onCompleteEnumerator);
             onCompleteEnumerator = OnCompleteEnumerator(tweenLength);
             StartCoroutine(onCompleteEnumerator);
-            transform.DOMove(hovereObject.transform.position, tweenLength);
-            transform.DORotate(hovereObject.transform.eulerAngles, tweenLength);
+            transform.DOMove(hoveredObject.transform.position, tweenLength);
+            transform.DORotate(hoveredObject.transform.eulerAngles, tweenLength);
+            pickedUpCorrectly = false;
+            hoveringOverCorrectTarget = false;
+            hoveredObject = null;
         }
     }
 }
