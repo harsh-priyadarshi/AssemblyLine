@@ -32,6 +32,7 @@ namespace AL.Theme
         public Gradient redGradient, greenGradient, blueGradient;
         public Color redHighlight = new Color(.45f, 0, 0, 4) / 4;
         public Color greenHighlight = new Color(0, .45f, 0, 4) / 4;
+        public Color yellowHighlight = new Color(0, .45f, 0, 4) / 4;
         #endregion
     }
 }

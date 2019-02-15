@@ -131,6 +131,8 @@ namespace AL
         List<RawComponent> rawComponents;
         [SerializeField]
         List<DynamicObject> resetttableTransorms;
+        [SerializeField]
+        List<AssemblyTool> grabbableTools;
 
         [Header("Anchors")]
         [SerializeField]
@@ -140,7 +142,6 @@ namespace AL
         private Transform hangerAnchor1;
         [SerializeField]
         private Transform hangerAnchor2;
-     
 
         private GameObject gameplayEnvironment;
         private GameObject gameplayHomeMenu;
@@ -148,13 +149,11 @@ namespace AL
         private bool atHome = true;
         private CustomTransform homePlayerPosition, gameplayPlayerPosition;
         private IEnumerator toggleHomeCoroutine = null;
-        private bool introDone = false;
-        private Tweener assemblyInitiator;
-
-        #region RESETTABLE_VARIABLES
         private bool gameplayStarted = false;
         private int currentStepIndex = 0;
-        #endregion
+        private bool resultReady = false;
+        private bool introDone = false;
+        private Tweener assemblyInitiator;
 
         public State CurrentState { get { return currentState; } }
         public bool AtHome { get { return atHome; } }
@@ -174,18 +173,22 @@ namespace AL
                 InitiateAssembly();
             }
 
-            if (OVRInput.GetDown(OVRInput.Button.PrimaryHandTrigger, OVRInput.Controller.RTouch))
-            {
-                if (Coordinator.instance.modalWindow.gameObject.activeSelf)
-                {
-                    Coordinator.instance.modalWindow.Close();
-                }
-                else
-                {
-                    Coordinator.instance.modalWindow.Show(UI.WindowType.ERROR, "Hi, this is dummy result");
 
-                }
-            }
+            if (Coordinator.instance.settings.SelectedPreferences.mainMenuKey.GetDown() && resultReady)
+                ToggleResultPanel();
+
+            //if (OVRInput.GetDown(OVRInput.Button.PrimaryHandTrigger, OVRInput.Controller.RTouch))
+            //{
+            //    if (Coordinator.instance.modalWindow.gameObject.activeSelf)
+            //    {
+            //        Coordinator.instance.modalWindow.Close();
+            //    }
+            //    else
+            //    {
+            //        Coordinator.instance.modalWindow.Show(UI.WindowType.ERROR, "Hi, this is dummy result");
+
+            //    }
+            //}
 
         }
 
@@ -199,6 +202,8 @@ namespace AL
             homePlayerPosition.Extract(Coordinator.instance.ovrPlayerController.transform);
             gameplayPlayerPosition.Extract(Coordinator.instance.ovrPlayerController.transform);
 
+            foreach (var item in grabbableTools)
+                item.Init();
             foreach (var item in resetttableTransorms)
                 item.Init();
             foreach (var item in rawComponents)
@@ -215,6 +220,7 @@ namespace AL
                 assemblyInitiator = null;
             }
 
+            resultReady = false;
             BIW.SetActive(false);
             doorHanger.SetActive(false);
             dynamicAssemblyObjects.SetActive(false);
@@ -228,6 +234,8 @@ namespace AL
             ComponentReset();
            
             foreach (var item in resetttableTransorms)
+                item.OnReset();
+            foreach (var item in grabbableTools)
                 item.OnReset();
         }
 
@@ -363,7 +371,7 @@ namespace AL
 
         private void GiveIntro()
         {
-            if (!introDone)
+            if (!introDone && !gameplayStarted)
             {
                 Coordinator.instance.audioManager.Queue(currentState == State.TRAINING ? "training_intro" : "assessment_intro");
                 introDone = true;
@@ -461,17 +469,37 @@ namespace AL
 
         private bool InterchangeTarget(GameObject hoveredObj)
         {
-            var stepInvolvingHoveredObj = assemblySteps.Find(item => item.CorrectPart.Equals(hoveredObj));
+            return false;
+
+            var stepInvolvingHoveredObj = assemblySteps.Find(item => item.CorrectPart.Equals(hoveredObj) && item.StepType == assemblySteps[currentStepIndex].StepType);
 
             if (stepInvolvingHoveredObj == null || stepInvolvingHoveredObj.Status != StepStatus.NOT_STARTED)
-            {
                 return false;
-            }
             else
             {
                 stepInvolvingHoveredObj.CorrectPart = assemblySteps[currentStepIndex].CorrectPart;
                 assemblySteps[currentStepIndex].CorrectPart = hoveredObj;
                 return true;
+            }
+        }
+
+        private void ToggleResultPanel()
+        {
+            if (Coordinator.instance.modalWindow.gameObject.activeSelf)
+                Coordinator.instance.modalWindow.Close();
+            else
+            {
+                float totalTimeTaken = 0;
+                int totalNumberOfWrongAttemps = 0;
+
+                foreach (var item in assemblySteps)
+                {
+                    totalTimeTaken += item.TimeTaken;
+                    totalNumberOfWrongAttemps += item.WrongAttemptCount;
+                }
+
+                var result = "Time taken: " + (int)totalTimeTaken + " seconds\n" + "Wrong attempts: ".Style(errorTextColorStyle) + totalNumberOfWrongAttemps;
+                Coordinator.instance.modalWindow.Show(UI.WindowType.RESULT, result);
             }
         }
 
@@ -504,42 +532,37 @@ namespace AL
                 return false;
         }
 
-        public bool ValidateHover(GameObject obj, GameObject hoveredObject)
+        public bool ValidateHover(StepType relatedStepType, GameObject obj, GameObject hoveredObject)
         {
-            if (currentStepIndex < assemblySteps.Count && !obj.tag.Equals(hoveredObject.tag))
+            if (currentStepIndex >= assemblySteps.Count)
                 return false;
-            else if (currentStepIndex < assemblySteps.Count && assemblySteps[currentStepIndex].ValidateHover(hoveredObject))
+
+            if (!obj.tag.Equals(hoveredObject.tag) || relatedStepType != assemblySteps[currentStepIndex].StepType)
+                return false;
+            else if (assemblySteps[currentStepIndex].ValidateHover(hoveredObject))
                 return true;
             else
                 return InterchangeTarget(hoveredObject);
         }
 
-        public void OnToolGrab(GameObject obj)
+        public bool OnToolGrab(GameObject obj)
         {
-            print("OnToolGrab");
+            if (currentStepIndex < assemblySteps.Count && assemblySteps[currentStepIndex].StepType == StepType.PART_INSTALLATION)
+                return assemblySteps[currentStepIndex].ValidatePickup(obj);
+            else
+                return false;
         }
 
         public void Finish()
         {
-            float totalTimeTaken = 0;
-            int totalNumberOfWrongAttemps = 0;
-
-            foreach (var item in assemblySteps)
-            {
-                totalTimeTaken += item.TimeTaken;
-                totalNumberOfWrongAttemps += item.WrongAttemptCount;
-            }
-
-            var result = "Time taken: " + (int)totalTimeTaken + " seconds\n" + "Wrong attempts: ".Style(errorTextColorStyle) + totalNumberOfWrongAttemps;
-            Coordinator.instance.modalWindow.Show(UI.WindowType.RESULT, result);
-
+            resultReady = true;
             var finishNarration = RetrieveNarration(MultipleNarrationType.ASSEMBLY_FINISH);
             Coordinator.instance.audioManager.Queue(finishNarration);
         }
 
         public void OnPlacement(bool correct)
         {
-            if (currentStepIndex < assemblySteps.Count && assemblySteps[currentStepIndex].StepType == StepType.PART_PLACEMENT)
+            if (currentStepIndex < assemblySteps.Count)
             {
                 assemblySteps[currentStepIndex].OnPlacement(correct);
                 if (correct && assemblySteps[currentStepIndex].StepType == StepType.PART_PLACEMENT)
@@ -549,7 +572,7 @@ namespace AL
                     if (currentStepIndex == assemblySteps.Count)
                         Finish();
                     else
-                        InitiateNextStep();
+                        Invoke("InitiateNextStep", Coordinator.instance.settings.SelectedPreferences.assemblyTweenLength);
                 }
             }
         }

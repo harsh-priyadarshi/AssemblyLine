@@ -5,20 +5,29 @@ using UnityEngine;
 
 namespace AL.Gameplay
 {
-    public class RawComponent : OVRGrabbable, IResettable, IAssemblyItem
+    public class AssemblyTool : OVRGrabbable, IResettable, IAssemblyItem
     {
         private GameObject hoveredObject;
         private bool pickedUpCorrectly = false;
         private bool hoveringOverCorrectTarget = false;
-        private bool assemblyShowUp = false;
         CustomTransform originalTransform;
-        private HighlightType highlightedType = HighlightType.NONE;
+        HighlightType highlightedType = HighlightType.NONE;
+        private bool assemblyShowUp = false;
+
 
         private IEnumerator onCompleteEnumerator, onGrabEnumerator;
 
-        public void Init()
+        //void Update()
+        //{
+        //    if (hoveringOverCorrectTarget && Coordinator.instance.settings.SelectedPreferences.gameplayStartKey.GetDown())
+        //    {
+
+        //    }
+        //}
+
+        private void PlayToolAnimation()
         {
-            originalTransform.Extract(transform);
+
         }
 
         private IEnumerator OnCompleteEnumerator(float tweenLength)
@@ -27,18 +36,10 @@ namespace AL.Gameplay
             AssemblyComplete();
         }
 
-        private IEnumerator OnGrabEnumerator()
-        {
-            Highlight(pickedUpCorrectly ? HighlightType.GREEN : HighlightType.YELLOW);
-            yield return new WaitForSeconds(Coordinator.instance.settings.SelectedPreferences.assemblyTweenLength);
-            Highlight(HighlightType.NONE);
-        }
-
         private void AssemblyComplete()
         {
-            Debug.Log("ShowUpForAssembly: "+ assemblyShowUp);
             if (assemblyShowUp)
-                ShowUpForAssembly(StepType.PART_PLACEMENT);
+                ShowUpForAssembly(StepType.PART_INSTALLATION);
             else
             {
                 hoveredObject = null;
@@ -50,14 +51,26 @@ namespace AL.Gameplay
             }
         }
 
+        private IEnumerator OnWrongGrabEnumerator()
+        {
+            Highlight(pickedUpCorrectly ? HighlightType.GREEN: HighlightType.YELLOW);
+            yield return new WaitForSeconds(Coordinator.instance.settings.SelectedPreferences.assemblyTweenLength);
+            Highlight(HighlightType.NONE);
+        }
+
+        public void Init()
+        {
+            originalTransform.Extract(transform);
+        }
+
         public override void GrabBegin(OVRGrabber hand, Collider grabPoint)
         {
             base.GrabBegin(hand, grabPoint);
-            pickedUpCorrectly = Coordinator.instance.appManager.OnObjectGrab(gameObject);
-
+            pickedUpCorrectly = Coordinator.instance.appManager.OnToolGrab(gameObject);
+          
             if (onGrabEnumerator != null)
                 StopCoroutine(onGrabEnumerator);
-            onGrabEnumerator = OnGrabEnumerator();
+            onGrabEnumerator = OnWrongGrabEnumerator();
             StartCoroutine(onGrabEnumerator);
 
             if (pickedUpCorrectly)
@@ -70,18 +83,17 @@ namespace AL.Gameplay
             if (hoveredObject != null && hoveredObject.layer == 13)
                 Coordinator.instance.appManager.OnPlacement(pickedUpCorrectly && hoveringOverCorrectTarget);
             pickedUpCorrectly = false;
-            Step.pickedupAssemblyItem = null;
         }
 
         public void OnTriggerEnter(Collider other)
         {
             //print("OnTriggerEnter: " + other.name);
-          
+
             hoveredObject = other.gameObject;
             if (hoveredObject.layer == 13 && pickedUpCorrectly)
             {
-                hoveringOverCorrectTarget = Coordinator.instance.appManager.ValidateHover(StepType.PART_PLACEMENT, gameObject, hoveredObject);
-                Highlight( hoveringOverCorrectTarget ? HighlightType.GREEN : HighlightType.RED);
+                hoveringOverCorrectTarget = Coordinator.instance.appManager.ValidateHover(StepType.PART_INSTALLATION, gameObject, hoveredObject);
+                Highlight(hoveringOverCorrectTarget ? HighlightType.GREEN : HighlightType.RED);
             }
         }
 
@@ -147,7 +159,7 @@ namespace AL.Gameplay
                 gameObject.SetActive(true);
                 pickedUpCorrectly = false;
                 hoveringOverCorrectTarget = false;
-              
+
                 if (onGrabEnumerator != null)
                     StopCoroutine(onGrabEnumerator);
 
@@ -166,5 +178,6 @@ namespace AL.Gameplay
             transform.DOMove(hoveredObject.transform.position, tweenLength);
             transform.DORotate(hoveredObject.transform.eulerAngles, tweenLength);
         }
+
     }
 }

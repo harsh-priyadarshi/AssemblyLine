@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using AL.Gameplay;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 namespace AL
@@ -9,6 +10,7 @@ namespace AL
         BLILNK,
         RED,
         GREEN,
+        YELLOW,
         TRANSPARENT
     }
 
@@ -21,5 +23,6 @@ namespace AL
     {
         void AssemblyComplete(float tweenLength);
         void Highlight(HighlightType type);
+        void ShowUpForAssembly(StepType type);
     }
 }

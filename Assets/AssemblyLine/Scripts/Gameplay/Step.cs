@@ -44,9 +44,10 @@ namespace AL.Gameplay
         private IAssemblyItem correctAssemblyItemSample;
         private int wrongAttemptCount = 0;
         private StepStatus status = StepStatus.NOT_STARTED;
-        private GameObject pickedUpObject;
-        private IAssemblyItem pickedupAssemblyItem;
+        public static IAssemblyItem pickedupAssemblyItem;
         private float startTime, endTime;
+
+        private static GameObject pickedUpTool = null;
 
         public StepType StepType { get { return type; } }
 
@@ -62,7 +63,7 @@ namespace AL.Gameplay
             {
                 correctPart = value.GetComponent<AssemblyComponent>();
                 if (status == StepStatus.ONGOING)
-                    correctPart.WatchForAssembly(type);
+                    correctPart.ShowUpForAssembly(type);
                 else
                     correctPart.StopWatchingForAssembly();
             }
@@ -70,15 +71,10 @@ namespace AL.Gameplay
 
         private void InstructForStep()
         {
-            Debug.Log("InstructForStep: " + name);
+            //Debug.Log("InstructForStep: " + name);
             correctAssemblyItemSample = correctPickSample.GetComponent<IAssemblyItem>();
-            if (type == StepType.PART_PLACEMENT)
-            {
-                ((RawComponent)correctAssemblyItemSample).OnReset();
-                ((RawComponent)correctAssemblyItemSample).gameObject.SetActive(true);
-            }
-            correctPart.WatchForAssembly(type);
-            correctAssemblyItemSample.Highlight(HighlightType.BLILNK);
+            correctAssemblyItemSample.ShowUpForAssembly(type);
+            correctPart.ShowUpForAssembly(type);
             if (!string.IsNullOrEmpty(narration))
                 Coordinator.instance.audioManager.Play(narration);
         }
@@ -122,19 +118,28 @@ namespace AL.Gameplay
 
         public bool ValidateHover(GameObject hoveredObject)
         {
-            Debug.Log("ValidateHover: " + hoveredObject.name + " " + correctPart.gameObject.name);
+            //Debug.Log("ValidateHover: " + hoveredObject.name + " " + correctPart.gameObject.name);
             return hoveredObject != null && hoveredObject.Equals(correctPart.gameObject);
         }
 
         public bool ValidatePickup(GameObject obj)
         {
-            if (obj.tag.Equals(correctPickSample.tag))
+            if (type == StepType.PART_PLACEMENT)
             {
-                if (obj.Equals(correctPickSample))
+                if (obj.tag.Equals(correctPickSample.tag))
+                {
+                    if (obj.Equals(correctPickSample))
+                        correctAssemblyItemSample.Highlight(HighlightType.NONE);
+                    return true;
+                }
+            }
+            else
+            {
+                if (obj.tag.Equals(correctPickSample.tag))
+                {
                     correctAssemblyItemSample.Highlight(HighlightType.NONE);
-                pickedUpObject = obj;
-                pickedupAssemblyItem = pickedUpObject.GetComponent<IAssemblyItem>();
-                return true;
+                    return true;
+                }
             }
 
             return false;
@@ -145,8 +150,6 @@ namespace AL.Gameplay
             Debug.Log("OnReset: " + name);
             wrongAttemptCount = 0;
             status = StepStatus.NOT_STARTED;
-            pickedUpObject = null;
-            pickedupAssemblyItem = null;
         }
     }
 }

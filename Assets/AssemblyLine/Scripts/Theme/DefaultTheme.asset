@@ -120,3 +120,4 @@ MonoBehaviour:
     m_NumAlphaKeys: 2
   redHighlight: {r: 0.47058824, g: 0, b: 0, a: 1}
   greenHighlight: {r: 0, g: 0.47058824, b: 0, a: 1}
+  yellowHighlight: {r: 0.9411765, g: 0.8165481, b: 0, a: 1}

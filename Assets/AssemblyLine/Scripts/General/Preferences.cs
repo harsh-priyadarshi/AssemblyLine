@@ -32,6 +32,7 @@ namespace AL
         [Header("Key Configuration")]
         public Key mainMenuKey = new Key(OVRInput.Button.One, OVRInput.Controller.LTouch);
         public Key gameplayStartKey = new Key(OVRInput.Button.One, OVRInput.Controller.RTouch);
+        public Key toolStartKey = new Key(OVRInput.Button.One, OVRInput.Controller.RTouch);
 
         [Header("Button Interaction")]
         [Range(.1f, 1)]

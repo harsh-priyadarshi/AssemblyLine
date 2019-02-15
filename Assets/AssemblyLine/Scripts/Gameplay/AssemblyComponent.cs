@@ -10,7 +10,7 @@ namespace AL.Gameplay
         private MeshRenderer meshRenderer;
         [SerializeField]
         [Range(1, 10)]
-        private float onHighlightScaleFactor;
+        private float onHighlightScaleFactor = 1;
 
         private bool highlighted = false;
         private StepType stepType = StepType.PART_PLACEMENT;
@@ -47,7 +47,7 @@ namespace AL.Gameplay
             }
         }
 
-        public void WatchForAssembly(StepType type)
+        public void ShowUpForAssembly(StepType type)
         {
             //print("WatchForAssembly: " + name);
             stepType = type;
@@ -108,10 +108,10 @@ namespace AL.Gameplay
                     break;
             }
 
-            if (type != HighlightType.NONE)
-                transform.localScale = originalScale * onHighlightScaleFactor;
-            else
-                transform.localScale = originalScale;
+            //if (type != HighlightType.NONE)
+            //    transform.localScale = originalScale * onHighlightScaleFactor;
+            //else
+            //    transform.localScale = originalScale;
         }
     }
 }
