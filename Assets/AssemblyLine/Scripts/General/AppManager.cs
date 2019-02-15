@@ -159,7 +159,7 @@ namespace AL
         public State CurrentState { get { return currentState; } }
         public bool AtHome { get { return atHome; } }
 
-        private void Awake()
+        private void Start()
         {
             Init();
         }
@@ -174,23 +174,27 @@ namespace AL
                 InitiateAssembly();
             }
 
-            //if (OVRInput.GetDown(OVRInput.Button.PrimaryHandTrigger, OVRInput.Controller.RTouch))
-            //{
-            //    if (Coordinator.instance.modalWindow.gameObject.activeSelf)
-            //    {
-            //        Coordinator.instance.modalWindow.Close();
-            //    }
-            //    else
-            //    {
-            //        Coordinator.instance.modalWindow.Show(UI.WindowType.ERROR, "Hi, this is dummy result");
+            if (OVRInput.GetDown(OVRInput.Button.PrimaryHandTrigger, OVRInput.Controller.RTouch))
+            {
+                if (Coordinator.instance.modalWindow.gameObject.activeSelf)
+                {
+                    Coordinator.instance.modalWindow.Close();
+                }
+                else
+                {
+                    Coordinator.instance.modalWindow.Show(UI.WindowType.ERROR, "Hi, this is dummy result");
 
-            //    }
-            //}
+                }
+            }
 
         }
 
         private void Init()
         {
+            if (Coordinator.instance == null)
+            {
+                print("Coordinator null");
+            }
             Coordinator.instance.ovrPlayerController.SetHaltUpdateMovement(true);
             homePlayerPosition.Extract(Coordinator.instance.ovrPlayerController.transform);
             gameplayPlayerPosition.Extract(Coordinator.instance.ovrPlayerController.transform);
