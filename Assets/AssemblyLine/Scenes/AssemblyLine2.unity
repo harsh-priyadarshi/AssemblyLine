@@ -2050,17 +2050,17 @@ MonoBehaviour:
     narration: bolt_1
   - name: Hinge Bolt 2
     correctPart: {fileID: 1690794809}
-    correctPickSample: {fileID: 525833403}
+    correctPickSample: {fileID: 902260107}
     type: 0
     narration: bolt_2
   - name: Hinge Bolt 3
     correctPart: {fileID: 62106225}
-    correctPickSample: {fileID: 525833403}
+    correctPickSample: {fileID: 1006793543}
     type: 0
     narration: bolt_3
   - name: Hinge Bolt 4
     correctPart: {fileID: 389665928}
-    correctPickSample: {fileID: 525833403}
+    correctPickSample: {fileID: 1956811036}
     type: 0
     narration: bolt_4
   - name: Install Hinge Bolt 1
@@ -6096,8 +6096,8 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 535765378}
   m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0, y: 0, z: 0}
-  m_LocalScale: {x: 25.4, y: 25.4, z: 25.4}
+  m_LocalPosition: {x: -0.0000020284, y: 0.348, z: -0.0030107}
+  m_LocalScale: {x: 14.781823, y: 12.230628, z: 14.781823}
   m_Children: []
   m_Father: {fileID: 56445144}
   m_RootOrder: 0
@@ -6118,7 +6118,7 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RenderingLayerMask: 4294967295
   m_Materials:
-  - {fileID: 2100004, guid: bbefbc35ee1679c48ab747ab9aef7f15, type: 3}
+  - {fileID: 2100000, guid: 2aeefdd7ecfda0d47aa71cc320600d37, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -7112,6 +7112,7 @@ MonoBehaviour:
   m_snapOrientation: 0
   m_snapOffset: {fileID: 0}
   m_grabPoints: []
+  fastener: {fileID: 0}
 --- !u!1 &614579092
 GameObject:
   m_ObjectHideFlags: 0
@@ -10326,6 +10327,7 @@ MonoBehaviour:
   m_snapOrientation: 0
   m_snapOffset: {fileID: 0}
   m_grabPoints: []
+  fastener: {fileID: 2073754826}
 --- !u!65 &926100692
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -10336,8 +10338,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.05521506, y: 0.51048845, z: 0.14074518}
-  m_Center: {x: 0.0011674959, y: -0.24475645, z: -0.04774476}
+  m_Size: {x: 0.05521506, y: 0.51048845, z: 0.11567451}
+  m_Center: {x: 0.0011674959, y: -0.24475645, z: -0.03520942}
 --- !u!54 &926100693
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -11033,7 +11035,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1021859488}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 2.2200003, y: 0, z: -0.70000076}
+  m_LocalPosition: {x: 2, y: 0, z: -0.4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1809521203}
@@ -12087,6 +12089,14 @@ MonoBehaviour:
     audioSourceObject: {fileID: 0}
     spatialBlend: 0
     isNarration: 1
+  - name: wrench
+    clip: {fileID: 8300000, guid: b50f402628cba0a49b9ae9580ea2864f, type: 3}
+    volume: 0.07
+    pitch: 1
+    loop: 0
+    audioSourceObject: {fileID: 0}
+    spatialBlend: 0
+    isNarration: 0
 --- !u!4 &1096924262
 Transform:
   m_ObjectHideFlags: 0
@@ -13294,6 +13304,7 @@ MonoBehaviour:
   m_snapOrientation: 0
   m_snapOffset: {fileID: 0}
   m_grabPoints: []
+  fastener: {fileID: 0}
 --- !u!1 &1171882913
 GameObject:
   m_ObjectHideFlags: 0
@@ -13402,7 +13413,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1181012996}
   m_LocalRotation: {x: 0.000000019233196, y: -0.47495762, z: 0.00000001038053, w: 0.8800087}
-  m_LocalPosition: {x: -3.74, y: -1.622935, z: -14.46}
+  m_LocalPosition: {x: -3.822, y: -1.622935, z: -13.956}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 141120404}
@@ -16774,6 +16785,7 @@ MonoBehaviour:
   m_snapOrientation: 0
   m_snapOffset: {fileID: 0}
   m_grabPoints: []
+  fastener: {fileID: 0}
 --- !u!1 &1606170232
 GameObject:
   m_ObjectHideFlags: 0
@@ -20127,6 +20139,7 @@ MonoBehaviour:
   m_snapOrientation: 0
   m_snapOffset: {fileID: 0}
   m_grabPoints: []
+  fastener: {fileID: 535765379}
 --- !u!54 &1963991067
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -20152,8 +20165,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.05521506, y: 0.51048845, z: 0.14074518}
-  m_Center: {x: 0.0011674959, y: -0.24475645, z: -0.04774476}
+  m_Size: {x: 0.05521506, y: 0.51048845, z: 0.11567451}
+  m_Center: {x: 0.0011674959, y: -0.24475645, z: -0.03520942}
 --- !u!1 &1972583626
 GameObject:
   m_ObjectHideFlags: 0
@@ -21758,8 +21771,8 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 2073754825}
   m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0, y: 0, z: 0}
-  m_LocalScale: {x: 25.4, y: 25.4, z: 25.4}
+  m_LocalPosition: {x: -0.0000020284, y: 0.348, z: -0.0030107}
+  m_LocalScale: {x: 14.781823, y: 12.230628, z: 14.781823}
   m_Children: []
   m_Father: {fileID: 438807587}
   m_RootOrder: 0
@@ -21780,7 +21793,7 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RenderingLayerMask: 4294967295
   m_Materials:
-  - {fileID: 2100004, guid: bbefbc35ee1679c48ab747ab9aef7f15, type: 3}
+  - {fileID: 2100000, guid: 2aeefdd7ecfda0d47aa71cc320600d37, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

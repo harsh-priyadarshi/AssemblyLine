@@ -174,7 +174,7 @@ namespace AL
             }
 
 
-            if (Coordinator.instance.settings.SelectedPreferences.mainMenuKey.GetDown() && resultReady)
+            if (Coordinator.instance.settings.SelectedPreferences.handMenuKey.GetDown() && resultReady)
                 ToggleResultPanel();
 
             //if (OVRInput.GetDown(OVRInput.Button.PrimaryHandTrigger, OVRInput.Controller.RTouch))
@@ -469,8 +469,6 @@ namespace AL
 
         private bool InterchangeTarget(GameObject hoveredObj)
         {
-            return false;
-
             var stepInvolvingHoveredObj = assemblySteps.Find(item => item.CorrectPart.Equals(hoveredObj) && item.StepType == assemblySteps[currentStepIndex].StepType);
 
             if (stepInvolvingHoveredObj == null || stepInvolvingHoveredObj.Status != StepStatus.NOT_STARTED)
@@ -560,23 +558,44 @@ namespace AL
             Coordinator.instance.audioManager.Queue(finishNarration);
         }
 
-        public void OnPlacement(bool correct)
+        public void OnPlacement(IAssemblyItem pickedUpItem, bool correct)
         {
             if (currentStepIndex < assemblySteps.Count)
             {
-                assemblySteps[currentStepIndex].OnPlacement(correct);
-                if (correct && assemblySteps[currentStepIndex].StepType == StepType.PART_PLACEMENT)
+                assemblySteps[currentStepIndex].OnPlacement(pickedUpItem, correct);
+                if (correct)
                 {
-                    assemblySteps[currentStepIndex].CompleteStep();
+                    assemblySteps[currentStepIndex].CompleteStep(pickedUpItem);
                     currentStepIndex++;
                     if (currentStepIndex == assemblySteps.Count)
                         Finish();
                     else
                         Invoke("InitiateNextStep", Coordinator.instance.settings.SelectedPreferences.assemblyTweenLength);
                 }
+                else
+                    assemblySteps[currentStepIndex].OnWrongAttempt(Mistake.LOCATION);
             }
         }
-       
+
+        public void OnToolRun(IAssemblyItem pickedUpItem, bool correct)
+        {
+            if (currentStepIndex < assemblySteps.Count)
+            {
+                assemblySteps[currentStepIndex].OnToolRun(pickedUpItem, correct);
+                if (correct)
+                {
+                    assemblySteps[currentStepIndex].CompleteStep(pickedUpItem);
+                    currentStepIndex++;
+                    if (currentStepIndex == assemblySteps.Count)
+                        Finish();
+                    else
+                        Invoke("InitiateNextStep", Coordinator.instance.settings.SelectedPreferences.assemblyTweenLength);
+                }
+                else
+                    assemblySteps[currentStepIndex].OnWrongAttempt(Mistake.LOCATION);
+            }
+        }
+
         #endregion
     }
 }

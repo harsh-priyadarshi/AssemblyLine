@@ -31,25 +31,23 @@ namespace AL.Gameplay
 
         private void AssemblyComplete()
         {
+            Highlight(HighlightType.NONE);
             if (stepType == StepType.PART_PLACEMENT)
-            {
-                Highlight(HighlightType.NONE);
                 meshRenderer.enabled = true;
-            }
         }
 
         public void StopWatchingForAssembly()
         {
             if (watchingForAssembly)
             {
-                meshRenderer.enabled = false;
+                if (stepType == StepType.PART_PLACEMENT)
+                    meshRenderer.enabled = false;
                 Highlight(HighlightType.NONE);
             }
         }
 
         public void ShowUpForAssembly(StepType type)
         {
-            //print("WatchForAssembly: " + name);
             stepType = type;
             watchingForAssembly = true;
             if (type == StepType.PART_PLACEMENT)
@@ -57,6 +55,8 @@ namespace AL.Gameplay
                 meshRenderer.enabled = true;
                 Highlight(HighlightType.TRANSPARENT);
             }
+            else
+                Highlight(HighlightType.BLILNK);
         }
 
         public void AssemblyComplete(float tweenLength)

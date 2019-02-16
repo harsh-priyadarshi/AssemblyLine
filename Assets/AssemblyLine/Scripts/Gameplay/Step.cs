@@ -61,6 +61,7 @@ namespace AL.Gameplay
             get { return correctPart.gameObject; }
             set
             {
+                Debug.Log("Replacing target: " + value.name + "for: " + name + " " + status.ToString());
                 correctPart = value.GetComponent<AssemblyComponent>();
                 if (status == StepStatus.ONGOING)
                     correctPart.ShowUpForAssembly(type);
@@ -73,7 +74,34 @@ namespace AL.Gameplay
         {
             //Debug.Log("InstructForStep: " + name);
             correctAssemblyItemSample = correctPickSample.GetComponent<IAssemblyItem>();
-            correctAssemblyItemSample.ShowUpForAssembly(type);
+            if (pickedupAssemblyItem != null)
+            {
+                if (pickedupAssemblyItem is RawComponent && StepType == StepType.PART_PLACEMENT)
+                {
+                    RawComponent pickedUpRaw = (RawComponent)pickedupAssemblyItem;
+                    if (!pickedUpRaw.tag.Equals(correctPart.tag))
+                        correctAssemblyItemSample.ShowUpForAssembly(type);
+                    else
+                        Debug.Log("InstructForStep: correct item already picked up");
+
+                }
+                else if (pickedupAssemblyItem is AssemblyTool && StepType == StepType.PART_INSTALLATION)
+                {
+                    AssemblyTool tool = (AssemblyTool)pickedupAssemblyItem;
+                    if (!tool.tag.Equals(correctPart.tag))
+                        correctAssemblyItemSample.ShowUpForAssembly(type);
+                    else
+                        Debug.Log("InstructForStep: correct item already picked up");
+                }
+                else
+                    correctAssemblyItemSample.ShowUpForAssembly(type);
+            }
+            else
+            {
+                correctAssemblyItemSample.ShowUpForAssembly(type);
+                Debug.Log("InstructForStep: pickedup item is null");
+            }
+
             correctPart.ShowUpForAssembly(type);
             if (!string.IsNullOrEmpty(narration))
                 Coordinator.instance.audioManager.Play(narration);
@@ -89,11 +117,11 @@ namespace AL.Gameplay
             startTime = Time.time;
         }
 
-        public void CompleteStep()
+        public void CompleteStep(IAssemblyItem pickedUpItem)
         {
             var tweenLength = Coordinator.instance.settings.SelectedPreferences.assemblyTweenLength;
             correctPart.AssemblyComplete(tweenLength);
-            pickedupAssemblyItem.AssemblyComplete(tweenLength);
+            pickedUpItem.AssemblyComplete(tweenLength);
             status = StepStatus.COMPLETE;
             endTime = Time.time;
         }
@@ -105,15 +133,26 @@ namespace AL.Gameplay
             wrongAttemptCount++;
         }
 
-        public void OnPlacement(bool correctPlacement)
+        public void OnPlacement(IAssemblyItem pickedUpItem, bool correctPlacement)
         {
-            pickedupAssemblyItem.Highlight(HighlightType.NONE);
+            pickedUpItem.Highlight(HighlightType.NONE);
             string placementNarration;
             if (correctPlacement)
                 placementNarration = Coordinator.instance.appManager.RetrieveNarration(MultipleNarrationType.CORRECT_STEP);
             else
                 placementNarration = Coordinator.instance.appManager.RetrieveNarration(Mistake.LOCATION);
             Coordinator.instance.audioManager.Interrupt(placementNarration);
+        }
+
+        public void OnToolRun(IAssemblyItem pickedUpItem, bool correctPlacement)
+        {
+            pickedUpItem.Highlight(HighlightType.NONE);
+            string toolRunNarration;
+            if (correctPlacement)
+                toolRunNarration = Coordinator.instance.appManager.RetrieveNarration(MultipleNarrationType.CORRECT_STEP);
+            else
+                toolRunNarration = Coordinator.instance.appManager.RetrieveNarration(Mistake.LOCATION);
+            Coordinator.instance.audioManager.Interrupt(toolRunNarration);
         }
 
         public bool ValidateHover(GameObject hoveredObject)
@@ -128,7 +167,7 @@ namespace AL.Gameplay
             {
                 if (obj.tag.Equals(correctPickSample.tag))
                 {
-                    if (obj.Equals(correctPickSample))
+                    if (!obj.Equals(correctPickSample))
                         correctAssemblyItemSample.Highlight(HighlightType.NONE);
                     return true;
                 }
@@ -137,7 +176,8 @@ namespace AL.Gameplay
             {
                 if (obj.tag.Equals(correctPickSample.tag))
                 {
-                    correctAssemblyItemSample.Highlight(HighlightType.NONE);
+                    if (!obj.Equals(correctPickSample))
+                        correctAssemblyItemSample.Highlight(HighlightType.NONE);
                     return true;
                 }
             }

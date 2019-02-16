@@ -1,10 +1,14 @@
-﻿using DG.Tweening;
+﻿using AL.Audio;
+using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace AL.Gameplay
 {
+    /// <summary>
+    /// Tool run is hard coded for spanner functionality
+    /// </summary>
     public class AssemblyTool : OVRGrabbable, IResettable, IAssemblyItem
     {
         private GameObject hoveredObject;
@@ -14,25 +18,56 @@ namespace AL.Gameplay
         HighlightType highlightedType = HighlightType.NONE;
         private bool assemblyShowUp = false;
 
+        [SerializeField]
+        private Transform fastener;
 
-        private IEnumerator onCompleteEnumerator, onGrabEnumerator;
 
-        //void Update()
-        //{
-        //    if (hoveringOverCorrectTarget && Coordinator.instance.settings.SelectedPreferences.gameplayStartKey.GetDown())
-        //    {
+        private IEnumerator onCompleteEnumerator, onGrabEnumerator, toolEnumerator;
 
-        //    }
-        //}
-
-        private void PlayToolAnimation()
+        void Update()
         {
+            if (pickedUpCorrectly && hoveredObject != null && hoveredObject.layer == 13 && Coordinator.instance.settings.SelectedPreferences.toolStartKey.GetDown())
+            {
+                Coordinator.instance.appManager.OnToolRun(this, hoveringOverCorrectTarget);
+                Coordinator.instance.audioManager.Play(AudioManager.wrench);
+            }
 
+            //if (Coordinator.instance.settings.SelectedPreferences.toolStartKey.GetDown())
+            //{
+            //    RunTool();
+            //    Coordinator.instance.audioManager.Play(AudioManager.wrench);
+            //}
+        }
+
+        private void RunTool()
+        {
+            if (fastener == null)
+                return;
+
+            if (toolEnumerator != null)
+                StopCoroutine(toolEnumerator);
+
+            toolEnumerator = RotateSpanner();
+            StartCoroutine(toolEnumerator);
+        }
+
+        private IEnumerator RotateSpanner()
+        {
+            float elapsedTime = 0.0f;
+            var tweenLength = 1.0f;
+
+            while (elapsedTime < tweenLength)
+            {
+                elapsedTime += Time.deltaTime;
+                fastener.Rotate(Vector3.up, 3000 * Time.deltaTime);
+                yield return new WaitForEndOfFrame();
+            }
         }
 
         private IEnumerator OnCompleteEnumerator(float tweenLength)
         {
             yield return new WaitForSeconds(tweenLength);
+            onCompleteEnumerator = null;
             AssemblyComplete();
         }
 
@@ -80,8 +115,9 @@ namespace AL.Gameplay
         public override void GrabEnd(Vector3 linearVelocity, Vector3 angularVelocity)
         {
             base.GrabEnd(linearVelocity, angularVelocity);
+            Step.pickedupAssemblyItem = null;
             if (hoveredObject != null && hoveredObject.layer == 13)
-                Coordinator.instance.appManager.OnPlacement(pickedUpCorrectly && hoveringOverCorrectTarget);
+                Coordinator.instance.appManager.OnPlacement(this, pickedUpCorrectly && hoveringOverCorrectTarget);
             pickedUpCorrectly = false;
         }
 
@@ -100,7 +136,8 @@ namespace AL.Gameplay
         public void OnTriggerExit(Collider other)
         {
             hoveredObject = null;
-            Highlight(HighlightType.NONE);
+            if (highlightedType != HighlightType.BLILNK)
+                Highlight(HighlightType.NONE);
         }
 
         public void Highlight(HighlightType type)
@@ -171,12 +208,7 @@ namespace AL.Gameplay
 
         public void AssemblyComplete(float tweenLength)
         {
-            if (onCompleteEnumerator != null)
-                StopCoroutine(onCompleteEnumerator);
-            onCompleteEnumerator = OnCompleteEnumerator(tweenLength);
-            StartCoroutine(onCompleteEnumerator);
-            transform.DOMove(hoveredObject.transform.position, tweenLength);
-            transform.DORotate(hoveredObject.transform.eulerAngles, tweenLength);
+            
         }
 
     }

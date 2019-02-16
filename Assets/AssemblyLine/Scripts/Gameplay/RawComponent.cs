@@ -24,6 +24,7 @@ namespace AL.Gameplay
         private IEnumerator OnCompleteEnumerator(float tweenLength)
         {
             yield return new WaitForSeconds(tweenLength);
+            onCompleteEnumerator = null;
             AssemblyComplete();
         }
 
@@ -36,7 +37,6 @@ namespace AL.Gameplay
 
         private void AssemblyComplete()
         {
-            Debug.Log("ShowUpForAssembly: "+ assemblyShowUp);
             if (assemblyShowUp)
                 ShowUpForAssembly(StepType.PART_PLACEMENT);
             else
@@ -46,7 +46,7 @@ namespace AL.Gameplay
                 gameObject.SetActive(false);
                 pickedUpCorrectly = false;
                 hoveringOverCorrectTarget = false;
-                Highlight(highlightedType);
+                Highlight(HighlightType.NONE);
             }
         }
 
@@ -67,10 +67,10 @@ namespace AL.Gameplay
         public override void GrabEnd(Vector3 linearVelocity, Vector3 angularVelocity)
         {
             base.GrabEnd(linearVelocity, angularVelocity);
-            if (hoveredObject != null && hoveredObject.layer == 13)
-                Coordinator.instance.appManager.OnPlacement(pickedUpCorrectly && hoveringOverCorrectTarget);
-            pickedUpCorrectly = false;
             Step.pickedupAssemblyItem = null;
+            if (hoveredObject != null && hoveredObject.layer == 13)
+                Coordinator.instance.appManager.OnPlacement(this, pickedUpCorrectly && hoveringOverCorrectTarget);
+            pickedUpCorrectly = false;
         }
 
         public void OnTriggerEnter(Collider other)
@@ -88,11 +88,13 @@ namespace AL.Gameplay
         public void OnTriggerExit(Collider other)
         {
             hoveredObject = null;
-            Highlight(HighlightType.NONE);
+            if (highlightedType != HighlightType.BLILNK)
+                Highlight(HighlightType.NONE);
         }
 
         public void Highlight(HighlightType type)
         {
+            Debug.Log("Highlight: " + type.ToString());
             switch (type)
             {
                 case HighlightType.NONE:
@@ -137,9 +139,9 @@ namespace AL.Gameplay
 
         public void ShowUpForAssembly(StepType type)
         {
-            //Debug.Log("ShowUpForAssembly");
             if (onCompleteEnumerator == null)
             {
+                Debug.Log("ShowUpForAssembly: oncompleteEnumerator is null");
                 hoveredObject = null;
                 assemblyShowUp = true;
                 Highlight(HighlightType.BLILNK);
@@ -147,7 +149,7 @@ namespace AL.Gameplay
                 gameObject.SetActive(true);
                 pickedUpCorrectly = false;
                 hoveringOverCorrectTarget = false;
-              
+                  
                 if (onGrabEnumerator != null)
                     StopCoroutine(onGrabEnumerator);
 

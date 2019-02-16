@@ -187,7 +187,8 @@ namespace AL.Audio
         public const string trainingBackgroundMusic = "training_background_music";
         public const string assessmentBackgroundMusic = "assessment_background_music";
         public const string machineAudio = "machine_audio";
-
+        public const string wrench = "wrench";
+        
         public Sound[] sounds;
 
         private AudioSource narrationSource;

@@ -30,9 +30,10 @@ namespace AL
     public class Preferences : ScriptableObject
     {
         [Header("Key Configuration")]
-        public Key mainMenuKey = new Key(OVRInput.Button.One, OVRInput.Controller.LTouch);
+        public Key mainMenuKey = new Key(OVRInput.Button.Start, OVRInput.Controller.LTouch);
         public Key gameplayStartKey = new Key(OVRInput.Button.One, OVRInput.Controller.RTouch);
         public Key toolStartKey = new Key(OVRInput.Button.One, OVRInput.Controller.RTouch);
+        public Key handMenuKey = new Key(OVRInput.Button.One, OVRInput.Controller.LTouch);
 
         [Header("Button Interaction")]
         [Range(.1f, 1)]
