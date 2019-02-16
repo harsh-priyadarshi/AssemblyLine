@@ -61,7 +61,7 @@ namespace AL.Gameplay
             get { return correctPart.gameObject; }
             set
             {
-                Debug.Log("Replacing target: " + value.name + "for: " + name + " " + status.ToString());
+                //Debug.Log("Replacing target: " + value.name + "for: " + name + " " + status.ToString());
                 correctPart = value.GetComponent<AssemblyComponent>();
                 if (status == StepStatus.ONGOING)
                     correctPart.ShowUpForAssembly(type);
@@ -81,8 +81,6 @@ namespace AL.Gameplay
                     RawComponent pickedUpRaw = (RawComponent)pickedupAssemblyItem;
                     if (!pickedUpRaw.tag.Equals(correctPart.tag))
                         correctAssemblyItemSample.ShowUpForAssembly(type);
-                    else
-                        Debug.Log("InstructForStep: correct item already picked up");
 
                 }
                 else if (pickedupAssemblyItem is AssemblyTool && StepType == StepType.PART_INSTALLATION)
@@ -90,8 +88,6 @@ namespace AL.Gameplay
                     AssemblyTool tool = (AssemblyTool)pickedupAssemblyItem;
                     if (!tool.tag.Equals(correctPart.tag))
                         correctAssemblyItemSample.ShowUpForAssembly(type);
-                    else
-                        Debug.Log("InstructForStep: correct item already picked up");
                 }
                 else
                     correctAssemblyItemSample.ShowUpForAssembly(type);
@@ -99,7 +95,6 @@ namespace AL.Gameplay
             else
             {
                 correctAssemblyItemSample.ShowUpForAssembly(type);
-                Debug.Log("InstructForStep: pickedup item is null");
             }
 
             correctPart.ShowUpForAssembly(type);
@@ -129,6 +124,7 @@ namespace AL.Gameplay
         public void OnWrongAttempt(Mistake mistakeLevel)
         {
             var selectedNarration = Coordinator.instance.appManager.RetrieveNarration(mistakeLevel);
+            Coordinator.instance.modalWindow.Show(UI.WindowType.ERROR, "Wrong Attempt!");
             Coordinator.instance.audioManager.Interrupt(selectedNarration);
             wrongAttemptCount++;
         }
@@ -140,7 +136,10 @@ namespace AL.Gameplay
             if (correctPlacement)
                 placementNarration = Coordinator.instance.appManager.RetrieveNarration(MultipleNarrationType.CORRECT_STEP);
             else
+            {
                 placementNarration = Coordinator.instance.appManager.RetrieveNarration(Mistake.LOCATION);
+                Coordinator.instance.modalWindow.Show(UI.WindowType.ERROR, "Wrong Attempt!");
+            }
             Coordinator.instance.audioManager.Interrupt(placementNarration);
         }
 
@@ -151,7 +150,10 @@ namespace AL.Gameplay
             if (correctPlacement)
                 toolRunNarration = Coordinator.instance.appManager.RetrieveNarration(MultipleNarrationType.CORRECT_STEP);
             else
+            {
+                Coordinator.instance.modalWindow.Show(UI.WindowType.ERROR, "Wrong Attempt!");
                 toolRunNarration = Coordinator.instance.appManager.RetrieveNarration(Mistake.LOCATION);
+            }
             Coordinator.instance.audioManager.Interrupt(toolRunNarration);
         }
 

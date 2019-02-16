@@ -9,6 +9,7 @@ namespace AL.UI
 {
     public enum WindowType
     {
+        NONE,
         ERROR,
         WARNING,
         RESULT
@@ -17,13 +18,13 @@ namespace AL.UI
     public class ModalWindow : MonoBehaviour, IResettable
     {
         [SerializeField]
-        Image headerImage;
+        Image headerImage, headerIcon;
 
         [SerializeField]
         private List<Image> buttonImages;
 
         [SerializeField]
-        private TextMeshProUGUI textContent;
+        private TextMeshProUGUI textContent, titleText;
 
         [SerializeField]
         private RectTransform tweenHeaderOpenAnchor, tweenHeaaderCloseAnchor;
@@ -34,12 +35,26 @@ namespace AL.UI
         [SerializeField]
         private Transform anchor;
 
+      
+        [SerializeField]
+        private Button okButton;
+
+        [Header("Sprites")]
+        [SerializeField]
+        private Sprite errorIcon;
+        [SerializeField]
+        private Sprite warningIcon;
+        [SerializeField]
+        private Sprite resultIcon;
+
         bool windowOn = false;
 
         private CustomHand leftHand, rightHand;
 
         private bool leftHandHovering = false;
         private bool rightHandHovering = false;
+        private IEnumerator autoCloseEnumerator;
+        private WindowType currentWindowType = WindowType.NONE;
 
         private void Start()
         {
@@ -49,7 +64,8 @@ namespace AL.UI
 
         private void Update()
         {
-            UpdateHandPose();
+            if (currentWindowType == WindowType.RESULT)
+                UpdateHandPose();
         }
 
         private void UpdateHandPose()
@@ -88,24 +104,48 @@ namespace AL.UI
             headerImage.rectTransform.DOSizeDelta(tweenHeaderOpenAnchor.sizeDelta, Coordinator.instance.settings.SelectedPreferences.assemblyTweenLength).OnComplete(() => mainPanel.SetActive(true));
         }
 
+        private IEnumerator AutoClose()
+        {
+            yield return new WaitForSeconds(Coordinator.instance.settings.SelectedPreferences.modalWindowAutoCloseTime);
+            Close();
+        }
+
         public void Show(WindowType windowType, string content)
         {
+            print(windowType.ToString() + " " + content);
+            if (autoCloseEnumerator != null)
+            {
+                StopCoroutine(autoCloseEnumerator);
+                autoCloseEnumerator = null;
+            }
+
+            var autoClose = false;
+
             windowOn = true;
             switch (windowType)
             {
                 case WindowType.ERROR:
                     headerImage.color = Coordinator.instance.appTheme.SelectedTheme.ErrorPanelColor;
+                    headerIcon.sprite = errorIcon;
+                    okButton.gameObject.SetActive(false);
+                    autoClose = true;
                     break;
                 case WindowType.WARNING:
                     headerImage.color = Coordinator.instance.appTheme.SelectedTheme.WarningPanelColor;
+                    headerIcon.sprite = warningIcon;
+                    autoClose = true;
+                    okButton.gameObject.SetActive(false);
                     break;
                 case WindowType.RESULT:
                     headerImage.color = Coordinator.instance.appTheme.SelectedTheme.ResultPanelColor;
+                    headerIcon.sprite = resultIcon;
                     break;
                 default:
                     headerImage.color = Coordinator.instance.appTheme.SelectedTheme.ResultPanelColor;
                     break;
             }
+
+            titleText.text = windowType.ToString();
 
             foreach (var item in buttonImages)
                 item.color = headerImage.color;
@@ -114,15 +154,22 @@ namespace AL.UI
             textContent.text = content;
 
             Open();
+
+            if (autoClose)
+            {
+                autoCloseEnumerator = AutoClose();
+                StartCoroutine(autoCloseEnumerator);
+            }
         }
 
         public void Close()
         {
+            currentWindowType = WindowType.NONE;
             windowOn = false;
             transform.SetParent(anchor);
             transform.localPosition = Vector3.zero;
             transform.localRotation = Quaternion.identity;
-
+            okButton.gameObject.SetActive(true);
             mainPanel.SetActive(false);
             headerImage.gameObject.SetActive(true);
             headerImage.rectTransform.DOSizeDelta(tweenHeaaderCloseAnchor.sizeDelta, Coordinator.instance.settings.SelectedPreferences.assemblyTweenLength).OnComplete(() => gameObject.SetActive(false));

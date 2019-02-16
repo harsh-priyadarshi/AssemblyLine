@@ -53,5 +53,6 @@ namespace AL
         [Header("UI")]
         public float handHoverRange = .6f;
         public float handHoverEndDistance = .8f;
+        public float modalWindowAutoCloseTime = 3.0f;
     }
 }

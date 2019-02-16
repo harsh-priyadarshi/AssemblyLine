@@ -50,11 +50,9 @@ namespace AL.Gameplay
         {
             stepType = type;
             watchingForAssembly = true;
+            meshRenderer.enabled = true;
             if (type == StepType.PART_PLACEMENT)
-            {
-                meshRenderer.enabled = true;
                 Highlight(HighlightType.TRANSPARENT);
-            }
             else
                 Highlight(HighlightType.BLILNK);
         }

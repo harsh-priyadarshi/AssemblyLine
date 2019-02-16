@@ -31,6 +31,8 @@ namespace AL.Gameplay
         private IEnumerator OnGrabEnumerator()
         {
             Highlight(pickedUpCorrectly ? HighlightType.GREEN : HighlightType.YELLOW);
+            if (!pickedUpCorrectly)
+                Coordinator.instance.modalWindow.Show(UI.WindowType.WARNING, "Wrong Object!");
             yield return new WaitForSeconds(Coordinator.instance.settings.SelectedPreferences.assemblyTweenLength);
             Highlight(HighlightType.NONE);
         }
@@ -68,15 +70,15 @@ namespace AL.Gameplay
         {
             base.GrabEnd(linearVelocity, angularVelocity);
             Step.pickedupAssemblyItem = null;
-            if (hoveredObject != null && hoveredObject.layer == 13)
+            if (pickedUpCorrectly && hoveredObject != null && hoveredObject.layer == 13)
                 Coordinator.instance.appManager.OnPlacement(this, pickedUpCorrectly && hoveringOverCorrectTarget);
             pickedUpCorrectly = false;
         }
 
         public void OnTriggerEnter(Collider other)
         {
-            //print("OnTriggerEnter: " + other.name);
-          
+            print("OnTriggerEnter: " + other.name);
+
             hoveredObject = other.gameObject;
             if (hoveredObject.layer == 13 && pickedUpCorrectly)
             {
