@@ -237,6 +237,8 @@ namespace AL
                 item.OnReset();
             foreach (var item in grabbableTools)
                 item.OnReset();
+
+            Coordinator.instance.databaseManager.SaveUserActivity(assemblySteps);
         }
 
         public void ApplyShader(bool CiconiaHighlight, string shaderPath, GameObject obj, Color color)

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using AL.Audio;
 using AL.UI;
+using AL.Database;
 
 namespace AL
 {
@@ -20,6 +21,7 @@ namespace AL
         public OVRPlayerController ovrPlayerController;
         public AppManager appManager;
         public ModalWindow modalWindow;
+        public DatabaseManager databaseManager;
 
         [Header("Objects")]
         public CustomHand leftHand;

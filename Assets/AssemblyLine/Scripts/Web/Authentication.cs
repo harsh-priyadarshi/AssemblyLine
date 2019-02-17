@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using AL.Database;
 
 namespace AL.Web
 {
@@ -18,7 +19,46 @@ namespace AL.Web
         private TextMeshProUGUI vrTitleText, vrLoginInstructionText;
         [SerializeField]
         private GameObject mainMenu;
-       
+        [SerializeField]
+        private TextMeshProUGUI loginErrorText;
+
+        private List<Person> users = new List<Person>();
+
+        private Person currentUser;
+
+        public Person CurrentUser { get { return currentUser; } }
+
+        private IEnumerator loginFailEnumerator;
+
+        private void Start()
+        {
+            LoadUsers();
+        }
+
+
+        private void LoadUsers()
+        {
+            var ds = new DataService("Users.db");
+            var savedUsers = ds.GetPersons();
+            
+            foreach (var people in savedUsers)
+                users.Add(people);
+        }
+
+        private void OnLoginFail()
+        {
+            loginErrorText.gameObject.SetActive(true);
+            if (loginFailEnumerator != null)
+                StopCoroutine(loginFailEnumerator);
+            loginFailEnumerator = LoginFail();
+            StartCoroutine(loginFailEnumerator);
+        }
+
+        private IEnumerator LoginFail()
+        {
+            yield return new WaitForSeconds(2 * Coordinator.instance.settings.SelectedPreferences.assemblyTweenLength);
+            loginErrorText.gameObject.SetActive(false);
+        }
 
         public void OnInputEndEdit()
         {
@@ -28,12 +68,20 @@ namespace AL.Web
 
         public void Login()
         {
-            loginScreen.SetActive(false);
-            usernameText.text = username.text;
+            currentUser = users.Find(item => item.UserName.Equals(username.text));
+
+            if (currentUser == null || !currentUser.Password.Equals(password.text))
+                OnLoginFail();
+            else
+            {
+                usernameText.text = currentUser.Name;
+                LoggedIn = true;
+                loginScreen.SetActive(false);
+                Coordinator.instance.appManager.OnLoginToggle(true);
+            }
+
             username.text = "";
             password.text = "";
-            LoggedIn = true;
-            Coordinator.instance.appManager.OnLoginToggle(true);
         }
 
         public void Logout()

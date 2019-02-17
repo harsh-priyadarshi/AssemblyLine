@@ -51,6 +51,8 @@ namespace AL.Gameplay
 
         public StepType StepType { get { return type; } }
 
+        public string Name { get { return name; } }
+
         public StepStatus Status { get { return status; } }
 
         public float TimeTaken { get { return endTime - startTime; } }
