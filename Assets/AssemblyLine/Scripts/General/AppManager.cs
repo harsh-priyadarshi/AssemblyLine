@@ -145,7 +145,7 @@ namespace AL
 
         private GameObject gameplayEnvironment;
         private GameObject gameplayHomeMenu;
-        private State currentState = State.NONE;
+        private  static State currentState = State.NONE;
         private bool atHome = true;
         private CustomTransform homePlayerPosition, gameplayPlayerPosition;
         private IEnumerator toggleHomeCoroutine = null;
@@ -155,7 +155,7 @@ namespace AL
         private bool introDone = false;
         private Tweener assemblyInitiator;
 
-        public State CurrentState { get { return currentState; } }
+        public static State CurrentState { get { return currentState; } }
         public bool AtHome { get { return atHome; } }
 
         private void Start()
@@ -307,8 +307,8 @@ namespace AL
         public void InitAssessment()
         {
             currentState = State.ASSESSMENT;
-            gameplayHomeMenu = assessmentHomeMenu;
-            gameplayEnvironment = assessmentEnvironment;
+            gameplayHomeMenu = trainingHomeMenu;
+            gameplayEnvironment = trainingEnvironment;
             mainHomeMenu.SetActive(false);
             ToggleHome(() => GiveIntro());
         }
@@ -335,7 +335,7 @@ namespace AL
             OnReset();
             ToggleHome(null);
         }
-        
+
         public void AssessmentReset()
         {
             OnReset();
@@ -353,12 +353,25 @@ namespace AL
 
         public void OnLoginToggle(bool val)
         {
-            vrTitleText.SetActive(val);
-            vrLoginInstructionText.SetActive(!val);
-            if (currentState == State.NONE)
-                mainHomeMenu.SetActive(val);
+            if (!val)
+            {
+                ToggleHome(() => {
+                    GameplayQuit();
+                    vrTitleText.SetActive(val);
+                    vrLoginInstructionText.SetActive(!val);
+                    mainHomeMenu.SetActive(val);
+                    introDone = false;
+                });
+            }
             else
-                gameplayHomeMenu.SetActive(val);
+            {
+                vrTitleText.SetActive(val);
+                vrLoginInstructionText.SetActive(!val);
+                if (currentState == State.NONE)
+                    mainHomeMenu.SetActive(val);
+                else
+                    gameplayHomeMenu.SetActive(val);
+            }
         }
 
         #region GAMEPLAY
@@ -371,7 +384,7 @@ namespace AL
 
         private void GiveIntro()
         {
-            if (!introDone && !gameplayStarted)
+            if (!introDone && !gameplayStarted && currentState == State.TRAINING)
             {
                 Coordinator.instance.audioManager.Queue(currentState == State.TRAINING ? "training_intro" : "assessment_intro");
                 introDone = true;
@@ -570,7 +583,7 @@ namespace AL
                     if (currentStepIndex == assemblySteps.Count)
                         Finish();
                     else
-                        Invoke("InitiateNextStep", Coordinator.instance.settings.SelectedPreferences.assemblyTweenLength);
+                        Invoke("InitiateNextStep", 2 * Coordinator.instance.settings.SelectedPreferences.assemblyTweenLength);
                 }
                 else
                     assemblySteps[currentStepIndex].OnWrongAttempt(Mistake.LOCATION);

@@ -7,7 +7,7 @@ namespace AL.Gameplay
     public class AssemblyComponent : MonoBehaviour, IResettable, IAssemblyItem
     {
         [SerializeField]
-        private MeshRenderer meshRenderer;
+        private List<MeshRenderer> meshRenderer;
         [SerializeField]
         [Range(1, 10)]
         private float onHighlightScaleFactor = 1;
@@ -33,7 +33,10 @@ namespace AL.Gameplay
         {
             Highlight(HighlightType.NONE);
             if (stepType == StepType.PART_PLACEMENT)
-                meshRenderer.enabled = true;
+            {
+                foreach (var item in meshRenderer)
+                    item.enabled = true;
+            }
         }
 
         public void StopWatchingForAssembly()
@@ -41,7 +44,8 @@ namespace AL.Gameplay
             if (watchingForAssembly)
             {
                 if (stepType == StepType.PART_PLACEMENT)
-                    meshRenderer.enabled = false;
+                    foreach (var item in meshRenderer)
+                        item.enabled = false;
                 Highlight(HighlightType.NONE);
             }
         }
@@ -50,7 +54,13 @@ namespace AL.Gameplay
         {
             stepType = type;
             watchingForAssembly = true;
-            meshRenderer.enabled = true;
+
+            if (AppManager.CurrentState == State.TRAINING)
+            {
+                foreach (var item in meshRenderer)
+                    item.enabled = true;
+            }
+            
             if (type == StepType.PART_PLACEMENT)
                 Highlight(HighlightType.TRANSPARENT);
             else
@@ -62,7 +72,8 @@ namespace AL.Gameplay
             if (assemblyCompleteEnumerator != null)
                 StopCoroutine(assemblyCompleteEnumerator);
             if (stepType == StepType.PART_PLACEMENT)
-                meshRenderer.enabled = false;
+                foreach (var item in meshRenderer)
+                    item.enabled = false;
             assemblyCompleteEnumerator = AssemblyCompleteEnumerator(tweenLength);
             StartCoroutine(assemblyCompleteEnumerator);
             watchingForAssembly = false;
@@ -70,13 +81,17 @@ namespace AL.Gameplay
 
         public void OnReset()
         {
-            meshRenderer.enabled = false;
+            foreach (var item in meshRenderer)
+                item.enabled = false;
             watchingForAssembly = false;
             Highlight(HighlightType.NONE);
         }
 
         public void Highlight(HighlightType type)
         {
+            if (AppManager.CurrentState == State.ASSESSMENT)
+                return;
+
             switch (type)
             {
                 case HighlightType.NONE:

@@ -1,0 +1,158 @@
+fileFormatVersion: 2
+guid: 0bc9e423ee57c70478d600b8f7ce3276
+ModelImporter:
+  serializedVersion: 23
+  fileIDToRecycleName:
+    100000: //RootNode
+    100002: lvh_A0071200029
+    100004: lvh_A0071200029_WIRES
+    100006: lvh_A0071200350_PRT
+    100008: lvh_A0071200399_ASM
+    100010: lvh_Brep_1_900
+    100012: lvh_Brep_25_5
+    100014: lvh_Brep_26_5
+    100016: lvh_Brep_27_5
+    100018: lvh_Brep_28_5
+    100020: lvh_Brep_2_201
+    100022: lvh_E0100044_PRT__2
+    100024: lvh_E0100060_PRT
+    100026: lvh_E0100074_PRT
+    100028: lvh_E0100176
+    100030: lvh_E0700002_FCTN01
+    400000: //RootNode
+    400002: lvh_A0071200029
+    400004: lvh_A0071200029_WIRES
+    400006: lvh_A0071200350_PRT
+    400008: lvh_A0071200399_ASM
+    400010: lvh_Brep_1_900
+    400012: lvh_Brep_25_5
+    400014: lvh_Brep_26_5
+    400016: lvh_Brep_27_5
+    400018: lvh_Brep_28_5
+    400020: lvh_Brep_2_201
+    400022: lvh_E0100044_PRT__2
+    400024: lvh_E0100060_PRT
+    400026: lvh_E0100074_PRT
+    400028: lvh_E0100176
+    400030: lvh_E0700002_FCTN01
+    2100000: lv_components_asm_stp_v001_opti_a0071200399_asm_lvHarness_v001_opti_Material__4
+    2100002: lv_components_asm_stp_v001_opti_a0071200399_asm_lvHarness_v001_opti_Color36493
+    2100004: lv_components_asm_stp_v001_opti_a0071200399_asm_lvHarness_v001_opti_a0071200399_asm_lvHarness_pt_Material__20
+    2100006: lv_components_asm_stp_v001_opti_a0071200399_asm_lvHarness_v001_opti_Color21655
+    2100008: lv_components_asm_stp_v001_opti_a0071200399_asm_lvHarness_v001_opti_Material__2
+    2100010: lv_components_asm_stp_v001_opti_a0071200399_asm_lvHarness_v001_opti_PiXYZ_NO_MATERIAL_5
+    2300000: lvh_A0071200350_PRT
+    2300002: lvh_Brep_1_900
+    2300004: lvh_Brep_25_5
+    2300006: lvh_Brep_26_5
+    2300008: lvh_Brep_27_5
+    2300010: lvh_Brep_28_5
+    2300012: lvh_Brep_2_201
+    2300014: lvh_E0100044_PRT__2
+    2300016: lvh_E0100060_PRT
+    2300018: lvh_E0100074_PRT
+    2300020: lvh_E0100176
+    3300000: lvh_A0071200350_PRT
+    3300002: lvh_Brep_1_900
+    3300004: lvh_Brep_25_5
+    3300006: lvh_Brep_26_5
+    3300008: lvh_Brep_27_5
+    3300010: lvh_Brep_28_5
+    3300012: lvh_Brep_2_201
+    3300014: lvh_E0100044_PRT__2
+    3300016: lvh_E0100060_PRT
+    3300018: lvh_E0100074_PRT
+    3300020: lvh_E0100176
+    4300000: lvh_A0071200350_PRT
+    4300002: lvh_E0100074_PRT
+    4300004: lvh_E0100060_PRT
+    4300006: lvh_E0100044_PRT__2
+    4300008: lvh_Brep_25_5
+    4300010: lvh_Brep_26_5
+    4300012: lvh_Brep_27_5
+    4300014: lvh_Brep_28_5
+    4300016: lvh_Brep_1_900
+    4300018: lvh_Brep_2_201
+    4300020: lvh_E0100176
+  externalObjects: {}
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 0.01
+    meshCompression: 0
+    addColliders: 0
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    preserveHierarchy: 0
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+    previousCalculatedGlobalScale: 1
+    hasPreviousCalculatedGlobalScale: 0
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 0
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

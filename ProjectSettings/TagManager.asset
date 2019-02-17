@@ -6,6 +6,7 @@ TagManager:
   tags:
   - door
   - bolt
+  - door_harness
   layers:
   - Default
   - TransparentFX

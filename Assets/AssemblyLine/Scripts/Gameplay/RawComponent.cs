@@ -31,7 +31,7 @@ namespace AL.Gameplay
         private IEnumerator OnGrabEnumerator()
         {
             Highlight(pickedUpCorrectly ? HighlightType.GREEN : HighlightType.YELLOW);
-            if (!pickedUpCorrectly)
+            if (!pickedUpCorrectly && AppManager.CurrentState == State.TRAINING)
                 Coordinator.instance.modalWindow.Show(UI.WindowType.WARNING, "Wrong Object!");
             yield return new WaitForSeconds(Coordinator.instance.settings.SelectedPreferences.assemblyTweenLength);
             Highlight(HighlightType.NONE);
@@ -96,7 +96,11 @@ namespace AL.Gameplay
 
         public void Highlight(HighlightType type)
         {
-            Debug.Log("Highlight: " + type.ToString());
+            if (AppManager.CurrentState == State.ASSESSMENT)
+                return;
+
+            //Debug.Log("Highlight: " + type.ToString());
+
             switch (type)
             {
                 case HighlightType.NONE:
@@ -143,7 +147,7 @@ namespace AL.Gameplay
         {
             if (onCompleteEnumerator == null)
             {
-                Debug.Log("ShowUpForAssembly: oncompleteEnumerator is null");
+                //Debug.Log("ShowUpForAssembly: oncompleteEnumerator is null");
                 hoveredObject = null;
                 assemblyShowUp = true;
                 Highlight(HighlightType.BLILNK);

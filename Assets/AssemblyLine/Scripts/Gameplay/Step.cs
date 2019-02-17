@@ -98,7 +98,7 @@ namespace AL.Gameplay
             }
 
             correctPart.ShowUpForAssembly(type);
-            if (!string.IsNullOrEmpty(narration))
+            if (!string.IsNullOrEmpty(narration) && AppManager.CurrentState != State.ASSESSMENT)
                 Coordinator.instance.audioManager.Play(narration);
         }
 
@@ -106,7 +106,7 @@ namespace AL.Gameplay
 
         public void InitiateStep()
         {
-            Debug.Log("InitiateStep: "+ name);
+            //Debug.Log("InitiateStep: "+ name);
             status = StepStatus.ONGOING;
             InstructForStep();
             startTime = Time.time;
@@ -123,38 +123,47 @@ namespace AL.Gameplay
 
         public void OnWrongAttempt(Mistake mistakeLevel)
         {
-            var selectedNarration = Coordinator.instance.appManager.RetrieveNarration(mistakeLevel);
             Coordinator.instance.modalWindow.Show(UI.WindowType.ERROR, "Wrong Attempt!");
-            Coordinator.instance.audioManager.Interrupt(selectedNarration);
+            if (AppManager.CurrentState == State.TRAINING)
+            {
+                var selectedNarration = Coordinator.instance.appManager.RetrieveNarration(mistakeLevel);
+                Coordinator.instance.audioManager.Interrupt(selectedNarration);
+            }
             wrongAttemptCount++;
         }
 
         public void OnPlacement(IAssemblyItem pickedUpItem, bool correctPlacement)
         {
             pickedUpItem.Highlight(HighlightType.NONE);
-            string placementNarration;
-            if (correctPlacement)
-                placementNarration = Coordinator.instance.appManager.RetrieveNarration(MultipleNarrationType.CORRECT_STEP);
-            else
-            {
-                placementNarration = Coordinator.instance.appManager.RetrieveNarration(Mistake.LOCATION);
-                Coordinator.instance.modalWindow.Show(UI.WindowType.ERROR, "Wrong Attempt!");
+            if(AppManager.CurrentState == State.TRAINING)
+            { 
+                string placementNarration;
+                if (correctPlacement)
+                    placementNarration = Coordinator.instance.appManager.RetrieveNarration(MultipleNarrationType.CORRECT_STEP);
+                else
+                    placementNarration = Coordinator.instance.appManager.RetrieveNarration(Mistake.LOCATION);
+                Coordinator.instance.audioManager.Interrupt(placementNarration);
             }
-            Coordinator.instance.audioManager.Interrupt(placementNarration);
+            if (!correctPlacement)
+                Coordinator.instance.modalWindow.Show(UI.WindowType.ERROR, "Wrong Attempt!");
         }
 
-        public void OnToolRun(IAssemblyItem pickedUpItem, bool correctPlacement)
+        public void OnToolRun(IAssemblyItem pickedUpItem, bool correctOperation)
         {
             pickedUpItem.Highlight(HighlightType.NONE);
-            string toolRunNarration;
-            if (correctPlacement)
-                toolRunNarration = Coordinator.instance.appManager.RetrieveNarration(MultipleNarrationType.CORRECT_STEP);
-            else
+            if (AppManager.CurrentState == State.TRAINING)
             {
-                Coordinator.instance.modalWindow.Show(UI.WindowType.ERROR, "Wrong Attempt!");
-                toolRunNarration = Coordinator.instance.appManager.RetrieveNarration(Mistake.LOCATION);
+                string toolRunNarration;
+                if (correctOperation)
+                    toolRunNarration = Coordinator.instance.appManager.RetrieveNarration(MultipleNarrationType.CORRECT_STEP);
+                else
+                {
+                    toolRunNarration = Coordinator.instance.appManager.RetrieveNarration(Mistake.LOCATION);
+                }
+                Coordinator.instance.audioManager.Interrupt(toolRunNarration);
             }
-            Coordinator.instance.audioManager.Interrupt(toolRunNarration);
+            if (!correctOperation)
+                Coordinator.instance.modalWindow.Show(UI.WindowType.ERROR, "Wrong Attempt!");
         }
 
         public bool ValidateHover(GameObject hoveredObject)
