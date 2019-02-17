@@ -112,7 +112,7 @@ namespace AL.UI
 
         public void Show(WindowType windowType, string content)
         {
-            print(windowType.ToString() + " " + content);
+            //print(windowType.ToString() + " " + content);
             if (autoCloseEnumerator != null)
             {
                 StopCoroutine(autoCloseEnumerator);

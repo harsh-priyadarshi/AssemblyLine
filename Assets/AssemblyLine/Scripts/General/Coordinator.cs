@@ -5,6 +5,7 @@ using UnityEngine;
 using AL.Audio;
 using AL.UI;
 using AL.Database;
+using AL.Web;
 
 namespace AL
 {
@@ -22,6 +23,7 @@ namespace AL
         public AppManager appManager;
         public ModalWindow modalWindow;
         public DatabaseManager databaseManager;
+        public Authentication authentication;
 
         [Header("Objects")]
         public CustomHand leftHand;

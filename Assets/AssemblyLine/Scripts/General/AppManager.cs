@@ -7,6 +7,7 @@ using System;
 using UnityEngine.Events;
 using System.Linq;
 using DG.Tweening;
+using AL.UI;
 
 namespace AL
 {
@@ -110,6 +111,8 @@ namespace AL
 
         [Header("Others")]
         [SerializeField]
+        ModalWindow resultWindow;
+        [SerializeField]
         private Material homeSkybox;
         [SerializeField]
         private Material gameplaySkybox;
@@ -154,8 +157,11 @@ namespace AL
         private bool resultReady = false;
         private bool introDone = false;
         private Tweener assemblyInitiator;
+        private bool doorCheckDone = false;
 
         public static State CurrentState { get { return currentState; } }
+        public bool AssemblyFinished { get { return currentStepIndex == assemblySteps.Count; } }
+
         public bool AtHome { get { return atHome; } }
 
         private void Start()
@@ -177,18 +183,18 @@ namespace AL
             if (Coordinator.instance.settings.SelectedPreferences.handMenuKey.GetDown() && resultReady)
                 ToggleResultPanel();
 
-            //if (OVRInput.GetDown(OVRInput.Button.PrimaryHandTrigger, OVRInput.Controller.RTouch))
-            //{
-            //    if (Coordinator.instance.modalWindow.gameObject.activeSelf)
-            //    {
-            //        Coordinator.instance.modalWindow.Close();
-            //    }
-            //    else
-            //    {
-            //        Coordinator.instance.modalWindow.Show(UI.WindowType.ERROR, "Hi, this is dummy result");
+            if (OVRInput.GetDown(OVRInput.Button.PrimaryHandTrigger, OVRInput.Controller.RTouch))
+            {
+                if (resultWindow.gameObject.activeSelf)
+                {
+                    resultWindow.Close();
+                }
+                else
+                {
+                    resultWindow.Show(UI.WindowType.RESULT, CreateResult());
 
-            //    }
-            //}
+                }
+            }
 
         }
 
@@ -309,8 +315,8 @@ namespace AL
         public void InitAssessment()
         {
             currentState = State.ASSESSMENT;
-            gameplayHomeMenu = trainingHomeMenu;
-            gameplayEnvironment = trainingEnvironment;
+            gameplayHomeMenu = assessmentHomeMenu;
+            gameplayEnvironment = assessmentEnvironment;
             mainHomeMenu.SetActive(false);
             ToggleHome(() => GiveIntro());
         }
@@ -496,10 +502,39 @@ namespace AL
             }
         }
 
+        private string Space(int length)
+        {
+            string space = "";
+            for (int i = 0; i < length; i++)
+                space += " ";
+            return space;
+        }
+
+        private string CreateResult()
+        {
+            string result = "Step Number".MakeupSpace(20)  + "Name".MakeupSpace(25)  + "Time Taken (s)".MakeupSpace(20)  + "Status".MakeupSpace(20)  + "Wrong Attempts".MakeupSpace(20).Style(errorTextColorStyle) + "\n\n";
+
+            print("Result: " + result.Length);
+            for (int i = 0; i < assemblySteps.Count; i++)
+            {
+                var stepNumber = (i + 1).ToString().MakeupSpace(20);
+                var step = assemblySteps[i];
+                var name = step.Name.MakeupSpace(25);
+                var timeTaken = (step.Status == StepStatus.COMPLETE ? step.TimeTaken.ToString() : "0").MakeupSpace(20);
+                var status = (step.Status == StepStatus.COMPLETE ? "Complete" : "Incomplete").MakeupSpace(20);
+                var wrongAttemtCount = step.WrongAttemptCount == 0 ? "0".MakeupSpace(20) : step.WrongAttemptCount.ToString().MakeupSpace(20).Style(errorTextColorStyle);
+
+                var thisStepResult = stepNumber + name + timeTaken + status + wrongAttemtCount + "\n";
+                result += thisStepResult;
+                //print(stepNumber.Length + " " + name.Length + " " + timeTaken.Length + " " + status.Length + " " + wrongAttemtCount.Length + " " + thisStepResult.Length);
+            }
+            return result;
+        }
+
         private void ToggleResultPanel()
         {
-            if (Coordinator.instance.modalWindow.gameObject.activeSelf)
-                Coordinator.instance.modalWindow.Close();
+            if (resultWindow.gameObject.activeSelf)
+                resultWindow.Close();
             else
             {
                 float totalTimeTaken = 0;
@@ -511,8 +546,8 @@ namespace AL
                     totalNumberOfWrongAttemps += item.WrongAttemptCount;
                 }
 
-                var result = "Time taken: " + (int)totalTimeTaken + " seconds\n" + "Wrong attempts: ".Style(errorTextColorStyle) + totalNumberOfWrongAttemps;
-                Coordinator.instance.modalWindow.Show(UI.WindowType.RESULT, result);
+                var result = CreateResult();
+                resultWindow.Show(UI.WindowType.RESULT, result);
             }
         }
 
@@ -566,11 +601,20 @@ namespace AL
                 return false;
         }
 
+        public void AssemblyFinish()
+        {
+            Coordinator.instance.audioManager.Queue("door_closing");
+        }
+
         public void Finish()
         {
-            resultReady = true;
-            var finishNarration = RetrieveNarration(MultipleNarrationType.ASSEMBLY_FINISH);
-            Coordinator.instance.audioManager.Queue(finishNarration);
+            if (!doorCheckDone)
+            {
+                resultReady = true;
+                doorCheckDone = true;
+                var finishNarration = RetrieveNarration(MultipleNarrationType.ASSEMBLY_FINISH);
+                Coordinator.instance.audioManager.Queue(finishNarration);
+            }
         }
 
         public void OnPlacement(IAssemblyItem pickedUpItem, bool correct)
@@ -583,7 +627,7 @@ namespace AL
                     assemblySteps[currentStepIndex].CompleteStep(pickedUpItem);
                     currentStepIndex++;
                     if (currentStepIndex == assemblySteps.Count)
-                        Finish();
+                        AssemblyFinish();
                     else
                         Invoke("InitiateNextStep", 2 * Coordinator.instance.settings.SelectedPreferences.assemblyTweenLength);
                 }
@@ -602,7 +646,7 @@ namespace AL
                     assemblySteps[currentStepIndex].CompleteStep(pickedUpItem);
                     currentStepIndex++;
                     if (currentStepIndex == assemblySteps.Count)
-                        Finish();
+                        AssemblyFinish();
                     else
                         Invoke("InitiateNextStep", Coordinator.instance.settings.SelectedPreferences.assemblyTweenLength);
                 }

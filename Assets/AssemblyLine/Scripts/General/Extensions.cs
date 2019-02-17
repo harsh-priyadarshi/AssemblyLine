@@ -44,5 +44,12 @@ namespace AL
         {
             return "<style=" + style + ">" + str + "</style>";
         }
+
+        public static string MakeupSpace(this string str, int length)
+        {
+            for (int i = str.Length; i < length; i++)
+                str += " ";
+            return str;
+        }
     }
 }

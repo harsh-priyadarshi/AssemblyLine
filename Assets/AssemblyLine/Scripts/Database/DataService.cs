@@ -140,6 +140,7 @@ namespace AL.Database
         }
 
         public string StartDate { get; set; }
+        public string UserName { get; set; }
         public int StepNumber { get; set; }
         public string Name { get; set; }
         public int TimeTaken { get; set; }
@@ -154,6 +155,7 @@ namespace AL.Database
                 var stepResult = new StepResult
                 {
                     StartDate = DateTime.UtcNow.ToShortTimeString() + ", " + DateTime.UtcNow.ToShortDateString(),
+                    UserName = Coordinator.instance.authentication.CurrentUser.UserName,
                     StepNumber = i + 1,
                     Name = step.Name,
                     TimeTaken = step.Status == StepStatus.COMPLETE ? (int)step.TimeTaken : 0,
