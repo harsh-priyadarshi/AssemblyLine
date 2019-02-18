@@ -111,7 +111,7 @@ namespace AL
 
         [Header("Others")]
         [SerializeField]
-        ModalWindow resultWindow;
+        ResultWindow resultWindow;
         [SerializeField]
         private Material homeSkybox;
         [SerializeField]
@@ -183,18 +183,17 @@ namespace AL
             if (Coordinator.instance.settings.SelectedPreferences.handMenuKey.GetDown() && resultReady)
                 ToggleResultPanel();
 
-            if (OVRInput.GetDown(OVRInput.Button.PrimaryHandTrigger, OVRInput.Controller.RTouch))
-            {
-                if (resultWindow.gameObject.activeSelf)
-                {
-                    resultWindow.Close();
-                }
-                else
-                {
-                    resultWindow.Show(UI.WindowType.RESULT, CreateResult());
-
-                }
-            }
+            //if (OVRInput.GetDown(OVRInput.Button.PrimaryHandTrigger, OVRInput.Controller.RTouch))
+            //{
+            //    if (resultWindow.gameObject.activeSelf)
+            //    {
+            //        resultWindow.Close();
+            //    }
+            //    else
+            //    {
+            //        resultWindow.ShowResult(assemblySteps);
+            //    }
+            //}
 
         }
 
@@ -237,6 +236,7 @@ namespace AL
             assemblyObjects.SetActive(false);
             Coordinator.instance.audioManager.OnReset();
             Coordinator.instance.modalWindow.OnReset();
+            resultWindow.OnReset();
             ComponentReset();
            
             foreach (var item in resetttableTransorms)
@@ -453,6 +453,7 @@ namespace AL
             RenderSettings.skybox = atHome ? homeSkybox : gameplaySkybox;
             homeCanvas.SetActive(atHome);
             Coordinator.instance.modalWindow.OnHomeToggle();
+            resultWindow.OnHomeToggle();
             if (assemblyInitiator != null)
                 assemblyInitiator.TogglePause();
 
@@ -536,19 +537,7 @@ namespace AL
             if (resultWindow.gameObject.activeSelf)
                 resultWindow.Close();
             else
-            {
-                float totalTimeTaken = 0;
-                int totalNumberOfWrongAttemps = 0;
-
-                foreach (var item in assemblySteps)
-                {
-                    totalTimeTaken += item.TimeTaken;
-                    totalNumberOfWrongAttemps += item.WrongAttemptCount;
-                }
-
-                var result = CreateResult();
-                resultWindow.Show(UI.WindowType.RESULT, result);
-            }
+                resultWindow.ShowResult(assemblySteps);
         }
 
         public string RetrieveNarration(Mistake mistakeLevel)

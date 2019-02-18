@@ -110,6 +110,56 @@ namespace AL.UI
             Close();
         }
 
+        public void Show(WindowType windowType)
+        {
+            if (autoCloseEnumerator != null)
+            {
+                StopCoroutine(autoCloseEnumerator);
+                autoCloseEnumerator = null;
+            }
+
+            var autoClose = false;
+
+            windowOn = true;
+            switch (windowType)
+            {
+                case WindowType.ERROR:
+                    headerImage.color = Coordinator.instance.appTheme.SelectedTheme.ErrorPanelColor;
+                    headerIcon.sprite = errorIcon;
+                    okButton.gameObject.SetActive(false);
+                    autoClose = true;
+                    break;
+                case WindowType.WARNING:
+                    headerImage.color = Coordinator.instance.appTheme.SelectedTheme.WarningPanelColor;
+                    headerIcon.sprite = warningIcon;
+                    autoClose = true;
+                    okButton.gameObject.SetActive(false);
+                    break;
+                case WindowType.RESULT:
+                    headerImage.color = Coordinator.instance.appTheme.SelectedTheme.ResultPanelColor;
+                    headerIcon.sprite = resultIcon;
+                    break;
+                default:
+                    headerImage.color = Coordinator.instance.appTheme.SelectedTheme.ResultPanelColor;
+                    break;
+            }
+
+            titleText.text = windowType.ToString();
+
+            foreach (var item in buttonImages)
+                item.color = headerImage.color;
+
+            transform.SetParent(Coordinator.instance.ovrPlayerController.transform.parent);
+
+            Open();
+
+            if (autoClose)
+            {
+                autoCloseEnumerator = AutoClose();
+                StartCoroutine(autoCloseEnumerator);
+            }
+        }
+
         public void Show(WindowType windowType, string content)
         {
             //print(windowType.ToString() + " " + content);
@@ -151,7 +201,9 @@ namespace AL.UI
                 item.color = headerImage.color;
 
             transform.SetParent(Coordinator.instance.ovrPlayerController.transform.parent);
-            textContent.text = content;
+
+            if (textContent != null)
+                textContent.text = content;
 
             Open();
 
@@ -179,7 +231,8 @@ namespace AL.UI
         
         public void OnReset()
         {
-            textContent.text = "";
+            if (textContent != null)
+                textContent.text = "";
             if (leftHandHovering)
             {
                 leftHand.ReleaseCustomPose();

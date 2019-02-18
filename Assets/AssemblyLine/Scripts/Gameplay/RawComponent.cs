@@ -77,7 +77,7 @@ namespace AL.Gameplay
 
         public void OnTriggerEnter(Collider other)
         {
-            print("OnTriggerEnter: " + other.name);
+            //print("OnTriggerEnter: " + other.name);
 
             hoveredObject = other.gameObject;
             if (hoveredObject.layer == 13 && pickedUpCorrectly)
