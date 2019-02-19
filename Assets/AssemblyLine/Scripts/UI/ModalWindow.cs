@@ -11,6 +11,7 @@ namespace AL.UI
     {
         NONE,
         ERROR,
+        INSTRUCTION,
         WARNING,
         RESULT
     }
@@ -46,6 +47,8 @@ namespace AL.UI
         private Sprite warningIcon;
         [SerializeField]
         private Sprite resultIcon;
+        [SerializeField]
+        private Sprite instructionIcon;
 
         bool windowOn = false;
 
@@ -55,6 +58,8 @@ namespace AL.UI
         private bool rightHandHovering = false;
         private IEnumerator autoCloseEnumerator;
         private WindowType currentWindowType = WindowType.NONE;
+
+        public TextMeshProUGUI TextContent { get { return textContent; } }
 
         private void Start()
         {
@@ -82,7 +87,7 @@ namespace AL.UI
             }
             else if (leftHandDistance > Coordinator.instance.settings.SelectedPreferences.handHoverEndDistance && leftHandHovering)
             {
-                leftHand.ReleaseCustomPose();
+                leftHand.SetCustomPose(HandState.NONE);
                 leftHandHovering = false;
             }
 
@@ -93,7 +98,7 @@ namespace AL.UI
             }
             else if (righthandDistance > Coordinator.instance.settings.SelectedPreferences.handHoverEndDistance && rightHandHovering)
             {
-                rightHand.ReleaseCustomPose();
+                rightHand.SetCustomPose(HandState.NONE);
                 rightHandHovering = false;
             }
         }
@@ -110,6 +115,43 @@ namespace AL.UI
             Close();
         }
 
+        private void ConfigureWindow(WindowType windowType, out bool autoClose)
+        {
+            okButton.gameObject.SetActive(false);
+            autoClose = false;
+            switch (windowType)
+            {
+                case WindowType.ERROR:
+                    headerImage.color = Coordinator.instance.appTheme.SelectedTheme.ErrorPanelColor;
+                    headerIcon.sprite = errorIcon;
+                    autoClose = true;
+                    break;
+                case WindowType.WARNING:
+                    headerImage.color = Coordinator.instance.appTheme.SelectedTheme.WarningPanelColor;
+                    headerIcon.sprite = warningIcon;
+                    autoClose = true;
+                    break;
+                case WindowType.RESULT:
+                    headerImage.color = Coordinator.instance.appTheme.SelectedTheme.ResultPanelColor;
+                    okButton.gameObject.SetActive(true);
+                    headerIcon.sprite = resultIcon;
+                    break;
+                case WindowType.INSTRUCTION:
+                    headerImage.color = Coordinator.instance.appTheme.SelectedTheme.InstructionPanelColor;
+                    headerIcon.sprite = instructionIcon;
+                    break;
+                default:
+                    headerImage.color = Coordinator.instance.appTheme.SelectedTheme.InstructionPanelColor;
+                    headerIcon.sprite = instructionIcon;
+                    break;
+            }
+
+            titleText.text = windowType.ToString();
+
+            foreach (var item in buttonImages)
+                item.color = headerImage.color;
+        }
+
         public void Show(WindowType windowType)
         {
             if (autoCloseEnumerator != null)
@@ -121,33 +163,7 @@ namespace AL.UI
             var autoClose = false;
 
             windowOn = true;
-            switch (windowType)
-            {
-                case WindowType.ERROR:
-                    headerImage.color = Coordinator.instance.appTheme.SelectedTheme.ErrorPanelColor;
-                    headerIcon.sprite = errorIcon;
-                    okButton.gameObject.SetActive(false);
-                    autoClose = true;
-                    break;
-                case WindowType.WARNING:
-                    headerImage.color = Coordinator.instance.appTheme.SelectedTheme.WarningPanelColor;
-                    headerIcon.sprite = warningIcon;
-                    autoClose = true;
-                    okButton.gameObject.SetActive(false);
-                    break;
-                case WindowType.RESULT:
-                    headerImage.color = Coordinator.instance.appTheme.SelectedTheme.ResultPanelColor;
-                    headerIcon.sprite = resultIcon;
-                    break;
-                default:
-                    headerImage.color = Coordinator.instance.appTheme.SelectedTheme.ResultPanelColor;
-                    break;
-            }
-
-            titleText.text = windowType.ToString();
-
-            foreach (var item in buttonImages)
-                item.color = headerImage.color;
+            ConfigureWindow(windowType, out autoClose);
 
             transform.SetParent(Coordinator.instance.ovrPlayerController.transform.parent);
 
@@ -160,7 +176,7 @@ namespace AL.UI
             }
         }
 
-        public void Show(WindowType windowType, string content)
+        public virtual void Show(WindowType windowType, string content)
         {
             //print(windowType.ToString() + " " + content);
             if (autoCloseEnumerator != null)
@@ -172,33 +188,7 @@ namespace AL.UI
             var autoClose = false;
 
             windowOn = true;
-            switch (windowType)
-            {
-                case WindowType.ERROR:
-                    headerImage.color = Coordinator.instance.appTheme.SelectedTheme.ErrorPanelColor;
-                    headerIcon.sprite = errorIcon;
-                    okButton.gameObject.SetActive(false);
-                    autoClose = true;
-                    break;
-                case WindowType.WARNING:
-                    headerImage.color = Coordinator.instance.appTheme.SelectedTheme.WarningPanelColor;
-                    headerIcon.sprite = warningIcon;
-                    autoClose = true;
-                    okButton.gameObject.SetActive(false);
-                    break;
-                case WindowType.RESULT:
-                    headerImage.color = Coordinator.instance.appTheme.SelectedTheme.ResultPanelColor;
-                    headerIcon.sprite = resultIcon;
-                    break;
-                default:
-                    headerImage.color = Coordinator.instance.appTheme.SelectedTheme.ResultPanelColor;
-                    break;
-            }
-
-            titleText.text = windowType.ToString();
-
-            foreach (var item in buttonImages)
-                item.color = headerImage.color;
+            ConfigureWindow(windowType, out autoClose);
 
             transform.SetParent(Coordinator.instance.ovrPlayerController.transform.parent);
 
@@ -235,13 +225,13 @@ namespace AL.UI
                 textContent.text = "";
             if (leftHandHovering)
             {
-                leftHand.ReleaseCustomPose();
+                leftHand.SetCustomPose(HandState.NONE);
                 leftHandHovering = false;
             }
 
             if (rightHandHovering)
             {
-                rightHand.ReleaseCustomPose();
+                rightHand.SetCustomPose(HandState.NONE);
                 rightHandHovering = false;
             }
         }

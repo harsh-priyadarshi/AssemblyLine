@@ -15,5 +15,6 @@ namespace AL.UI
                 stepResultElelments[i].Fill(i + 1, assemblySteps[i]);
             Show(WindowType.RESULT);
         }
+
     }
 }

@@ -488,7 +488,7 @@ AnimatorState:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: HandHold2Pose
+  m_Name: ScrueGrabbing
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -502,7 +502,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 7400008, guid: 5cce624b7740201419bb38dd7b509ef5, type: 3}
+  m_Motion: {fileID: 7400000, guid: 4a3a98c8a320e8a4eaab5d1ad638b4b7, type: 2}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 

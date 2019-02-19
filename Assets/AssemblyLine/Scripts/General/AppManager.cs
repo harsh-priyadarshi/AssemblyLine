@@ -25,6 +25,8 @@ namespace AL
         public Vector3 Position { get { return position; } }
         public Quaternion Rotation { get { return rotation; } }
         public Vector3 Scale { get { return scale; } }
+        public Transform Parent { get { return parent; } }
+
 
         public CustomTransform(Vector3 _position, Quaternion _rotation, Transform _parent)
         {
@@ -103,6 +105,7 @@ namespace AL
         public const string errorTextColorStyle = "Error";
         public const string normalShaderPath = "Standard";
         public const string assemblyInitiationTriggerString = "InitiateAssembly";
+        public const float animationTransitionTime = .125f;
 
 
         [Header("Gameplay")]
@@ -112,6 +115,8 @@ namespace AL
         [Header("Others")]
         [SerializeField]
         ResultWindow resultWindow;
+        [SerializeField]
+        ModalWindow instructionWindow;
         [SerializeField]
         private Material homeSkybox;
         [SerializeField]
@@ -128,6 +133,7 @@ namespace AL
         private GameObject trainingEnvironment, assessmentEnvironment, assemblyObjects, dynamicAssemblyObjects, BIW, doorHanger;
         [SerializeField]
         NarrationSet narrationSet;
+        [Header("Resettable Items")]
         [SerializeField]
         List<AssemblyComponent> assemblyComponents;
         [SerializeField]
@@ -179,9 +185,10 @@ namespace AL
                 InitiateAssembly();
             }
 
-
             if (Coordinator.instance.settings.SelectedPreferences.handMenuKey.GetDown() && resultReady)
                 ToggleResultPanel();
+            else if (Coordinator.instance.settings.SelectedPreferences.handMenuKey.GetDown() && gameplayStarted)
+                ToggleInstructionPanel();
 
             //if (OVRInput.GetDown(OVRInput.Button.PrimaryHandTrigger, OVRInput.Controller.RTouch))
             //{
@@ -237,6 +244,7 @@ namespace AL
             Coordinator.instance.audioManager.OnReset();
             Coordinator.instance.modalWindow.OnReset();
             resultWindow.OnReset();
+            instructionWindow.OnReset();
             ComponentReset();
            
             foreach (var item in resetttableTransorms)
@@ -385,9 +393,12 @@ namespace AL
         #region GAMEPLAY
         private void InitiateNextStep()
         {
-            print("InitiateNextStep");
+            //print("InitiateNextStep");
             if (assemblySteps.Count > currentStepIndex)
+            {
                 assemblySteps[currentStepIndex].InitiateStep();
+                instructionWindow.TextContent.text = assemblySteps[currentStepIndex].Instruction;
+            }
         }
 
         private void GiveIntro()
@@ -453,6 +464,7 @@ namespace AL
             RenderSettings.skybox = atHome ? homeSkybox : gameplaySkybox;
             homeCanvas.SetActive(atHome);
             Coordinator.instance.modalWindow.OnHomeToggle();
+            instructionWindow.OnHomeToggle();
             resultWindow.OnHomeToggle();
             if (assemblyInitiator != null)
                 assemblyInitiator.TogglePause();
@@ -540,6 +552,17 @@ namespace AL
                 resultWindow.ShowResult(assemblySteps);
         }
 
+        private void ToggleInstructionPanel()
+        {
+            if (instructionWindow.gameObject.activeSelf)
+                instructionWindow.Close();
+            else
+            {
+                var instruction = "Step No. " + (currentStepIndex + 1) + " " + assemblySteps[currentStepIndex].Instruction;
+                instructionWindow.Show(WindowType.INSTRUCTION, assemblySteps[currentStepIndex].Instruction);
+            }
+        }
+
         public string RetrieveNarration(Mistake mistakeLevel)
         {
             switch (mistakeLevel)
@@ -578,8 +601,10 @@ namespace AL
                 return false;
             else if (assemblySteps[currentStepIndex].ValidateHover(hoveredObject))
                 return true;
+            //else
+            //    return InterchangeTarget(hoveredObject);
             else
-                return InterchangeTarget(hoveredObject);
+                return false;
         }
 
         public bool OnToolGrab(GameObject obj)

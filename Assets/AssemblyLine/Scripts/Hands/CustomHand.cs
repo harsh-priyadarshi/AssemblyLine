@@ -235,7 +235,7 @@ namespace AL
         ACTION_BASED
     }
 
-    public class CustomHand : MonoBehaviour
+    public class CustomHand : OVRGrabber
     {
         private const string handOpenBoolString = "IsOpen";
         private const string handPointingBoolString = "IsPointing";
@@ -246,24 +246,22 @@ namespace AL
         private const string pointingToHoldTrigger = "PointingToHold";
         private static float stateTransitionDuration = .125f;
 
-        [SerializeField]
-        private OVRInput.Controller hand;
+        [Header("Custom Hand Specific")]
         [SerializeField]
         private Animator animator;
         [SerializeField]
-
         private HandState currentState = HandState.IDLE;
         private HandStateCategory currentHandStateType = HandStateCategory.IDLE;
 
-        private void Update()
-        {
-            if (currentHandStateType != HandStateCategory.ACTION_BASED)
-                UpdateHandState(false);
-        }
+        //private void Update()
+        //{
+        //    if (currentHandStateType != HandStateCategory.ACTION_BASED)
+        //        UpdateHandState(false);
+        //}
 
         private void UpdateHandState(bool resumeMode)
         {
-            var newState = Coordinator.instance.handStateInput.CheckForGestureInput(hand, resumeMode);
+            var newState = Coordinator.instance.handStateInput.CheckForGestureInput(m_controller, resumeMode);
 
             if (!resumeMode && newState != HandState.NONE)
             {
@@ -298,7 +296,7 @@ namespace AL
                     UpdateCurrentState(newState, HandStateCategory.INPUT_BASED);
                 }
             }
-            else if (currentHandStateType != HandStateCategory.IDLE && !resumeMode && Coordinator.instance.handStateInput.GetUp(currentState, hand))
+            else if (currentHandStateType != HandStateCategory.IDLE && !resumeMode && Coordinator.instance.handStateInput.GetUp(currentState, m_controller))
             {
                 animator.SetBool(StateToBoolianString(currentState), false);
                 UpdateCurrentState(HandState.IDLE, HandStateCategory.IDLE);
@@ -311,7 +309,6 @@ namespace AL
             yield return new WaitForSeconds(stateTransitionDuration+.1f);
             animator.SetBool(StateToBoolianString(state), false);
         }
-
 
         private void UpdateCurrentState(HandState _currentState, HandStateCategory _currentStateType)
         {
@@ -338,32 +335,33 @@ namespace AL
             }
         }
 
+        protected override void GrabBegin()
+        {
+            base.GrabBegin();
+        }
+
         public void SetCustomPose(HandState handState)
         {
             //Debug.LogError("SetCustomPose: "+ handState.ToString() + " " + hand.ToString());
             switch (handState)
             {
-                case HandState.POINTING:
-                    if (currentState != HandState.POINTING)
-                    {
-                        animator.SetBool(handPointingBoolString, true);
-                        if (currentState == HandState.HOLDING)
-                            animator.SetTrigger(holdToPointingTrigger);
-                        currentState = HandState.POINTING;
-                    }
-                break;
+                case HandState.SCRUE_GRABBING:
+                    animator.SetBool(scrueGrabbingBoolString, true);
+                    break;
+                case HandState.HOLDING:
+                    animator.SetBool(handHoldingBoolString, true);
+                    break;
+                case HandState.NONE:
+                    animator.SetBool(StateToBoolianString(currentState), false);
+                    break;
             }
+
+            currentState = handState == HandState.NONE ? HandState.IDLE : handState;
 
             if (handState != HandState.IDLE && handState != HandState.NONE)
                 currentHandStateType = HandStateCategory.ACTION_BASED;
             else
                 currentHandStateType = HandStateCategory.IDLE;
-        }
-
-        public void ReleaseCustomPose()
-        {
-            //Debug.LogError("ReleaseCustomPose: "+ hand.ToString());
-            UpdateHandState(true);
         }
     }
 }

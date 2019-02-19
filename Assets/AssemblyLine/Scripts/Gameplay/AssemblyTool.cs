@@ -21,8 +21,15 @@ namespace AL.Gameplay
         [SerializeField]
         private Transform fastener;
 
+        [SerializeField]
+        HandState grabPose = HandState.NONE;
+        [SerializeField]
+        Transform leftGrabAnchor, rightGrabAnchor;
+        [SerializeField]
+        private bool strictGrab = true;
 
         private IEnumerator onCompleteEnumerator, onGrabEnumerator, toolEnumerator;
+        private Tweener onGrabMoveTweener, onGrabRotateTweener;
 
         void Update()
         {
@@ -91,7 +98,13 @@ namespace AL.Gameplay
             Highlight(pickedUpCorrectly ? HighlightType.GREEN: HighlightType.YELLOW);
             if (!pickedUpCorrectly && AppManager.CurrentState == State.TRAINING)
                 Coordinator.instance.modalWindow.Show(UI.WindowType.WARNING, "Wrong Object!");
-            yield return new WaitForSeconds(Coordinator.instance.settings.SelectedPreferences.assemblyTweenLength);
+            yield return new WaitForSeconds(AppManager.animationTransitionTime);
+            if (strictGrab)
+            {
+                onGrabMoveTweener = transform.DOLocalMove(Vector3.zero, AppManager.animationTransitionTime);
+                onGrabRotateTweener = transform.DOLocalRotate(Quaternion.identity.eulerAngles, AppManager.animationTransitionTime);
+            }
+            yield return new WaitForSeconds(Coordinator.instance.settings.SelectedPreferences.assemblyTweenLength - AppManager.animationTransitionTime);
             Highlight(HighlightType.NONE);
         }
 
@@ -102,6 +115,25 @@ namespace AL.Gameplay
 
         public override void GrabBegin(OVRGrabber hand, Collider grabPoint)
         {
+            if (hand.Controller == OVRInput.Controller.RTouch && rightGrabAnchor != null)
+            {
+                transform.SetParent(rightGrabAnchor);
+                if (strictGrab)
+                {
+                    onGrabMoveTweener = transform.DOLocalMove(Vector3.zero, .125f);
+                    onGrabRotateTweener = transform.DOLocalRotate(Quaternion.identity.eulerAngles, .125f);
+                }
+            }
+            else if (hand.Controller == OVRInput.Controller.LTouch && leftGrabAnchor != null)
+            {
+                transform.SetParent(leftGrabAnchor);
+                if (strictGrab)
+                {
+                    onGrabMoveTweener = transform.DOLocalMove(Vector3.zero, .125f);
+                    onGrabRotateTweener = transform.DOLocalRotate(Quaternion.identity.eulerAngles, .125f);
+                }
+            }
+
             base.GrabBegin(hand, grabPoint);
             pickedUpCorrectly = Coordinator.instance.appManager.OnToolGrab(gameObject);
           
@@ -112,21 +144,34 @@ namespace AL.Gameplay
 
             if (pickedUpCorrectly)
                 Step.pickedupAssemblyItem = this;
+
+            var customHand = (CustomHand)hand;
+            customHand.SetCustomPose(grabPose);
         }
 
         public override void GrabEnd(Vector3 linearVelocity, Vector3 angularVelocity)
         {
+            if (onGrabMoveTweener != null && onGrabMoveTweener.IsPlaying())
+                onGrabMoveTweener.Kill();
+            if (onGrabRotateTweener != null && onGrabRotateTweener.IsPlaying())
+                onGrabRotateTweener.Kill();
+
+            var customHand = (CustomHand)grabbedBy;
+            customHand.SetCustomPose(HandState.NONE);
+
             base.GrabEnd(linearVelocity, angularVelocity);
+
             Step.pickedupAssemblyItem = null;
             if (pickedUpCorrectly && hoveredObject != null && hoveredObject.layer == 13)
                 Coordinator.instance.appManager.OnPlacement(this, pickedUpCorrectly && hoveringOverCorrectTarget);
             pickedUpCorrectly = false;
+
+            transform.SetParent(originalTransform.Parent);
         }
 
         public void OnTriggerEnter(Collider other)
         {
             //print("OnTriggerEnter: " + other.name);
-
             hoveredObject = other.gameObject;
             if (hoveredObject.layer == 13 && pickedUpCorrectly)
             {

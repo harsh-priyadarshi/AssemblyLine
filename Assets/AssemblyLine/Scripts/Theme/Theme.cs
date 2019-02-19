@@ -26,6 +26,7 @@ namespace AL.Theme
         public Color ErrorPanelColor = new Color32(20, 20, 26, 255);
         public Color WarningPanelColor = new Color32(20, 20, 26, 255);
         public Color ResultPanelColor = new Color32(20, 20, 26, 255);
+        public Color InstructionPanelColor = new Color32(20, 20, 26, 255);
         #endregion
 
         #region ObjectControl

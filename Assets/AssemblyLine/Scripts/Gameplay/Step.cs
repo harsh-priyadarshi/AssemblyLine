@@ -40,6 +40,8 @@ namespace AL.Gameplay
         private StepType type;
         [SerializeField]
         private string narration;
+        [SerializeField]
+        private string instruction;
 
         private IAssemblyItem correctAssemblyItemSample;
         private int wrongAttemptCount = 0;
@@ -50,14 +52,12 @@ namespace AL.Gameplay
         private static GameObject pickedUpTool = null;
 
         public StepType StepType { get { return type; } }
-
         public string Name { get { return name; } }
-
         public StepStatus Status { get { return status; } }
-
         public float TimeTaken { get { return endTime - startTime; } }
-
         public int WrongAttemptCount { get { return wrongAttemptCount; } }
+        public string Instruction { get { return instruction; } }
+
 
         public GameObject CorrectPart {
             get { return correctPart.gameObject; }
